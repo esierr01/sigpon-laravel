@@ -12,7 +12,7 @@ Tecnologías:
 <div align="left">
     <h3>Paso 1 (Clonar repositorio GitHub) - Ejecutar en terminal:</h3>
     <p style="background-color: #272c5c; color: white; padding: 10px; border-radius: 5px; max-width: 800px;">
-        git clone https://github.com/esierr01/plantilla-laravel-12-proyecto-autenticaci-n.git</p>
+        git clone https://github.com/esierr01/plantilla-laravel-12-proyecto-aut-ui-bootstrap.git</p>
     <h3>Paso 2 (instalar dependencias de PHP) - Ejecutar en terminal:</h3>
     <p style="background-color: #272c5c; color: white; padding: 10px; border-radius: 5px; max-width: 800px;">
         composer install</p>
