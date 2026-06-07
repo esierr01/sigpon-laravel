@@ -18,6 +18,17 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+            $table->integer('role')->unsigned()->default(3); // Agregado visitante
+            $table->boolean('active')->default(true);
+            $table->timestamp('last_login')->nullable();
+
+            // Clave foránea autorreferencial
+            $table->foreignId('create_for')
+                ->nullable()  // Permitir null para usuarios root
+                ->constrained('users')  // Apunta a la tabla users
+                ->onDelete('set null')  // Si el creador se elimina, se pone null
+                ->onUpdate('cascade');
+
             $table->timestamps();
         });
 

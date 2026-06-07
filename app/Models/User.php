@@ -2,48 +2,71 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+    // ✅ Agregar 'role' al fillable
     protected $fillable = [
         'name',
         'email',
         'password',
+        'role',           // ← Esto estaba faltando
+        'active',
+        'create_for',
+        'last_login',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    // ✅ Usar casts() no $casts (Laravel 12)
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'last_login' => 'datetime',
+            'active' => 'boolean',
+            'role' => 'integer',     // Cast a entero
+            'create_for' => 'integer',
         ];
+    }
+
+    // Constantes para roles
+    const ROLE_ADMIN = 1;
+    const ROLE_EDITOR = 2;
+    const ROLE_VISITOR = 3;
+
+    // Métodos helper
+    public function isAdmin()
+    {
+        return $this->role === self::ROLE_ADMIN;
+    }
+
+    public function isEditor()
+    {
+        return $this->role === self::ROLE_EDITOR;
+    }
+
+    public function isVisitor()
+    {
+        return $this->role === self::ROLE_VISITOR;
+    }
+
+    // Relación autorreferencial
+    public function createdUsers()
+    {
+        return $this->hasMany(User::class, 'create_for');
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'create_for');
     }
 }

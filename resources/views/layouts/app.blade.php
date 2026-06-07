@@ -20,11 +20,14 @@
 
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-lg border-bottom border-dark-subtle">
+        <nav class="navbar navbar-expand-lg bg-primary border-bottom border-dark-subtle">
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'Laravel') }}
-                </a>
+                <div class="d-flex align-items-center">
+                    <img src="{{ asset('image/logocantv.png') }}" class="mx-2" alt="Logo" height="40">
+                    <h2 class="mb-0 text-light">{{ config('app.name', 'Laravel') }}</h2>
+                    <p class="mb-0 ms-2 text-sm text-bold">Sistema de Inventario GPON</p>
+                </div>
+
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
@@ -54,17 +57,6 @@
 
                         <!-- Authentication Links -->
                         @guest
-                            @if (Route::has('login'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                                </li>
-                            @endif
-
-                            @if (Route::has('register'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                                </li>
-                            @endif
                         @else
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
@@ -76,7 +68,7 @@
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                         onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
+                                        {{ __('Cerrar Sesión') }}
                                     </a>
 
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
