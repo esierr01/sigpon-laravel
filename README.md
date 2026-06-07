@@ -1,44 +1,24 @@
-# PLANTILLA DE LARAVEL 12 - PROYECTO CON AUTENTICACION LARAVEL UI/BOOTSTRAP
+# SIGPON - SISTEMA DE INVENTARIO GPON
 
-## Desarrollado por: Emmanuel Sierra (Junio 2026)
+## Desarrollado por: Emmanuel Sierra (2026)
+## Proyecto PST IV
 
 Tecnologías:
 
+[![PHP](https://img.shields.io/badge/php-%23777BB4.svg?&logo=php&logoColor=white)](#)
 [![Laravel](https://img.shields.io/badge/Laravel-%23FF2D20.svg?logo=laravel&logoColor=white)](#)
+[![Bootstrap](https://img.shields.io/badge/Bootstrap-7952B3?logo=bootstrap&logoColor=fff)](#)
+[![Postgres](https://img.shields.io/badge/Postgres-%23316192.svg?logo=postgresql&logoColor=white)](#)
+
+<br/>
+Metodología:
+<br/><br/>
+
+[![SCRUM](https://img.shields.io/badge/SCRUM-5BE84E?logo=agile&logoColor=black)](#)
 
 <br/>
 
-## Pasos para clonar y utilizar plantilla (en terminal):
-<div align="left">
-    <h3>Paso 1 (Clonar repositorio GitHub) - Ejecutar en terminal:</h3>
-    <p style="background-color: #272c5c; color: white; padding: 10px; border-radius: 5px; max-width: 800px;">
-        git clone https://github.com/esierr01/plantilla-laravel-12-proyecto-aut-ui-bootstrap.git</p>
-    <h3>Paso 2 (instalar dependencias de PHP) - Ejecutar en terminal:</h3>
-    <p style="background-color: #272c5c; color: white; padding: 10px; border-radius: 5px; max-width: 800px;">
-        composer install</p>
-    <h3>Paso 3 (crear archivo .env) - Ejecutar en terminal:</h3>
-    <p style="background-color: #272c5c; color: white; padding: 10px; border-radius: 5px; max-width: 800px;">
-        ren .env-ejemplo .env</p>
-    <p>NOTA: editar archivo .env con tus credenciales de base de datos, por defecto tiene una db Sqlite3</p>
-    <h3>Paso 4 (Instalar dependencias de NodeJS) - Ejecutar en terminal:</h3>
-    <p style="background-color: #272c5c; color: white; padding: 10px; border-radius: 5px; max-width: 800px;">
-        npm install</p>
-    <h3>Paso 5 (Ejecutar Migraciones para que se creen las tablas necesarias) - Ejecutar en terminal:</h3>
-    <p style="background-color: #272c5c; color: white; padding: 10px; border-radius: 5px; max-width: 800px;">
-        php artisan migrate</p>
-</div>
-
 <br/>
-
-## Pasos para ejecutar proyecto (en dos terminales):
-<div align="left">
-    <h3>Paso 1 (Compilar assets (CSS y JS)) - Ejecutar en terminal 1:</h3>
-    <p style="background-color: #272c5c; color: white; padding: 10px; border-radius: 5px; max-width: 800px;">
-        npm run dev</p>
-    <h3>Paso 2 (Levantar servidor web) - Ejecutar en terminal 2:</h3>
-    <p style="background-color: #272c5c; color: white; padding: 10px; border-radius: 5px; max-width: 800px;">
-        php artisan serve</p>
-</div>
-
-
-
+<div align="center">
+    <img src="./enconstruccion.png" width="30%" />
+<div/>
