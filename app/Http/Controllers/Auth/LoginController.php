@@ -22,11 +22,19 @@ class LoginController extends Controller
     }
 
     /**
+     * Sobrescribimos este método para exigir que el usuario esté activo al intentar loguearse.
+     * Agregamos la condición 'active' => 1 a las credenciales que Laravel evalúa por defecto.
+     */
+    protected function attemptLogin(Request $request)
+    {
+        return $this->guard()->attempt(
+            $this->credentials($request) + ['active' => 1],
+            $request->filled('remember')
+        );
+    }
+
+    /**
      * The user has been authenticated.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  mixed  $user
-     * @return mixed
      */
     protected function authenticated(Request $request, $user)
     {
@@ -44,44 +52,43 @@ class LoginController extends Controller
 
     /**
      * Get the failed login response instance.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Symfony\Component\HttpFoundation\Response
-     *
-     * @throws \Illuminate\Validation\ValidationException
      */
     protected function sendFailedLoginResponse(Request $request)
     {
         // Verificar si el usuario existe en la base de datos
         $user = User::where('email', $request->email)->first();
 
-        // Determinar la observación según el caso
+        // Determinar la observación y el mensaje según el caso
         $observacion = '';
+        $campoError = 'email'; // Por defecto el error se muestra en el campo email
+        $mensajeError = '';
 
         if (!$user) {
             // El correo no existe
             $observacion = 'Correo no existe';
+            $mensajeError = 'Este correo no existe.';
+        } elseif (!$user->active) {
+            // El usuario existe pero está inactivo
+            $observacion = 'Usuario inactivo';
+            $mensajeError = 'Usuario inactivo. Contacte al administrador.';
         } else {
-            // El correo existe pero la contraseña es incorrecta
+            // El usuario existe y está activo, pero la contraseña es incorrecta
             $observacion = 'Contraseña errónea';
+            $campoError = 'password'; // Mostramos el error en el campo de contraseña
+            $mensajeError = 'Contraseña errónea.';
         }
-        // Registrar intento fallido
+
+        // Registrar intento fallido en el log
         LogAccess::create([
             'mail' => $request->email,
             'result' => false,
             'obs' => $observacion,
             'created_at' => now(),
         ]);
-        if (!$user) {
-            // El correo no existe
-            throw ValidationException::withMessages([
-                'email' => ['Este correo no existe.'],
-            ]);
-        } else {
-            // El correo existe pero la contraseña es incorrecta
-            throw ValidationException::withMessages([
-                'password' => ['Contraseña errónea.'],
-            ]);
-        }
+
+        // Lanzar la excepción con el mensaje personalizado
+        throw ValidationException::withMessages([
+            $campoError => [$mensajeError],
+        ]);
     }
 }

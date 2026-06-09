@@ -65,6 +65,7 @@ class User extends Authenticatable
         return $this->hasMany(User::class, 'create_for');
     }
 
+    // Relación: Un usuario fue creado por otro usuario
     public function creator()
     {
         return $this->belongsTo(User::class, 'create_for');

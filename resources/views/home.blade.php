@@ -85,7 +85,8 @@
                                             <i class="bi bi-sliders2 me-2"></i> General
                                         </a>
                                     @endif
-                                    <a href="#" class="text-white text-decoration-none d-block mb-2">
+                                    <a href="{{ route('usuarios.index') }}"
+                                        class="text-white text-decoration-none d-block mb-2">
                                         <i class="bi bi-people me-2"></i> Usuarios
                                     </a>
                                     <a href="#" class="text-white text-decoration-none d-block mb-2">
@@ -102,6 +103,8 @@
             </div>
 
             <!-- Contenido Principal (Métricas) -->
+            {{--  --}}
+            {{--  --}}
             <div class="col-md-9 col-lg-10 align-items-center">
                 <div class="p-5 align-items-center">
                     <h2 class="mb-5 fw-bolder">Dashboard</h2>
@@ -243,7 +246,7 @@
 
         #accordionMenu .collapse .ps-3>a:hover {
             /* background-color: #0d6efd;
-                color: white !important; */
+                    color: white !important; */
             background-color: #ffffff;
             color: #000000 !important;
             /* Necesario para sobreescribir text-white-50 */
