@@ -6,40 +6,31 @@
             <div class="col-md-8">
 
                 <!-- Botón Regresar -->
-                <a class="btn btn-info text-primary mb-4 fw-bold btn-regresar-hover" href="{{ route('usuarios.index') }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                        class="bi bi-arrow-return-left text-primary" viewBox="0 0 16 16"
-                        style="stroke: currentColor; stroke-width: 1.5; paint-order: stroke fill;">
+                <a href="{{ route('usuarios.index') }}" class="button mt-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="svgIcon" viewBox="0 0 16 16">
                         <path fill-rule="evenodd"
-                            d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5" />
+                            d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8" />
                     </svg>
-                    {{ __('Regresar') }}
                 </a>
 
-                <div class="card shadow">
-                    <div class="card-header bg-custom-gradient text-white">
+                <div class="card shadow mt-3">
+                    <div
+                        class="card-header bg-custom-gradient text-white d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Detalles del Usuario</h5>
+                        @if ($user->active)
+                            <span class="badge bg-success fs-6">Activo</span>
+                        @else
+                            <span class="badge bg-danger fs-6">Inactivo</span>
+                        @endif
                     </div>
 
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <h4 class="mb-3 fw-bold">{{ $user->name }}</h4>
-                            </div>
-                            <div class="col-md-4 text-end">
-                                @if ($user->active)
-                                    <span class="badge bg-success fs-6">Activo</span>
-                                @else
-                                    <span class="badge bg-danger fs-6">Inactivo</span>
-                                @endif
-                            </div>
-                        </div>
-
                         <table class="table table-borderless">
                             <tbody>
                                 <tr>
-                                    <th class="text-muted" style="width: 35%">ID:</th>
-                                    <td>{{ $user->id }}</td>
+                                    <th class="text-muted">Nombre Usuario:</th>
+                                    <td>{{ $user->name }}</td>
+
                                 </tr>
                                 <tr>
                                     <th class="text-muted">Correo Electrónico:</th>
@@ -113,6 +104,64 @@
             background: #058fad;
             background: -webkit-linear-gradient(to right, #0b6b8b, #00B4DB);
             background: linear-gradient(to right, #0083B0, #00B4DB);
+        }
+
+        /* From Uiverse.io by absent452 */
+        /* From Uiverse.io by vinodjangid07 */
+        .button {
+            width: 50px;
+            height: 35px;
+            border-radius: 20%;
+            background-color: #0093BE;
+            border: none;
+            font-weight: 300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 4px double #e9e9e9;
+            border-radius: 15px;
+            cursor: pointer;
+            transition-duration: 0.3s;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .svgIcon {
+            width: 18px;
+            transition-duration: 0.3s;
+        }
+
+        .svgIcon path {
+            fill: #ffffff;
+        }
+
+        .button:hover {
+            width: 140px;
+            border-radius: 15px;
+            transition-duration: 0.3s;
+            background-color: #0084B1;
+            align-items: center;
+        }
+
+        .button:hover .svgIcon {
+            transition-duration: 0.3s;
+            transform: translateY(-200%);
+        }
+
+        .button::before {
+            position: absolute;
+            bottom: -20px;
+            content: "Regresar";
+            color: #e9e9e9;
+            font-size: 0px;
+        }
+
+        .button:hover::before {
+            /* font-family: Garet; */
+            font-size: 15px;
+            opacity: 1;
+            bottom: unset;
+            transition-duration: 0.3s;
         }
     </style>
 @endpush

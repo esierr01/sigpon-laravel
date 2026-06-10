@@ -2,20 +2,11 @@
 
 @section('content')
     <div class="container">
-        <div class="row justify-content-center mt-3">
+        <div class="row justify-content-center mt-4">
             <div class="col-md-8">
-
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <!-- Botón Cancelar -->
-                    <a class="btn btn-danger fw-bold" href="{{ route('usuarios.index') }}">
-                        <i class="bi bi-x-circle me-2"></i> Cancelar
-                    </a>
-                    <h4 class="mb-0 text-muted">Editando Usuario</h4>
-                </div>
-
                 <div class="card shadow">
                     <div class="card-header bg-custom-gradient text-white">
-                        <h5 class="mb-0">Datos de: {{ $user->name }}</h5>
+                        <h5 class="mb-0">Editando Usuario: {{ $user->name }}</h5>
                     </div>
 
                     <div class="card-body">
@@ -44,45 +35,71 @@
                                 @enderror
                             </div>
 
-                            <!-- Rol -->
-                            <div class="mb-3">
-                                <label for="role" class="form-label fw-bold">Rol del Sistema</label>
-                                <select class="form-select @error('role') is-invalid @enderror" id="role"
-                                    name="role" required>
-                                    <option value="1" {{ old('role', $user->role) == 1 ? 'selected' : '' }}>Admin
-                                    </option>
-                                    <option value="2" {{ old('role', $user->role) == 2 ? 'selected' : '' }}>Editor
-                                    </option>
-                                    <option value="3" {{ old('role', $user->role) == 3 ? 'selected' : '' }}>Visitante
-                                    </option>
-                                </select>
-                                @error('role')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                            <!-- Fila para Rol y Estado (Activo) -->
+                            <div class="row mb-3 align-items-end justify-content-between">
+                                <!-- Rol (Izquierda) -->
+                                <div class="col-md-7">
+                                    <label for="role" class="form-label fw-bold">Rol del Sistema</label>
+                                    <select class="form-select @error('role') is-invalid @enderror" id="role"
+                                        name="role" required>
+                                        <option value="1" {{ old('role', $user->role) == 1 ? 'selected' : '' }}>Admin
+                                        </option>
+                                        <option value="2" {{ old('role', $user->role) == 2 ? 'selected' : '' }}>Editor
+                                        </option>
+                                        <option value="3" {{ old('role', $user->role) == 3 ? 'selected' : '' }}>
+                                            Visitante</option>
+                                    </select>
+                                    @error('role')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <!-- Estado (Derecha) -->
+                                <div class="col-auto">
+                                    <div class="form-check mb-1">
+                                        <input type="checkbox"
+                                            class="form-check-input @error('active') is-invalid @enderror" id="active"
+                                            name="active" {{ old('active', $user->active) ? 'checked' : '' }}>
+                                        <label class="form-check-label fw-bold" for="active">Usuario Activo</label>
+                                        @error('active')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
                             </div>
 
-                            <!-- Estado (Checkbox) -->
-                            <div class="mb-3 form-check">
-                                <input type="checkbox" class="form-check-input" id="active" name="active"
-                                    {{ old('active', $user->active) ? 'checked' : '' }}>
-                                <label class="form-check-label fw-bold" for="active">Usuario Activo</label>
+                            <!-- Fila para Contraseñas -->
+                            <div class="row mb-3">
+                                <!-- Contraseña (Izquierda) -->
+                                <div class="col-md-6">
+                                    <label for="password" class="form-label fw-bold">Nueva Contraseña</label>
+                                    <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                        id="password" name="password" placeholder="Dejar vacío para no cambiar">
+                                    <div class="form-text">Solo complete si desea cambiar la contraseña actual.</div>
+                                    @error('password')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <!-- Confirmar Contraseña (Derecha) -->
+                                <div class="col-md-6">
+                                    <label for="password_confirmation" class="form-label fw-bold">Confirmar
+                                        Contraseña</label>
+                                    <input type="password"
+                                        class="form-control @error('password_confirmation') is-invalid @enderror"
+                                        id="password_confirmation" name="password_confirmation">
+                                    @error('password_confirmation')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
                             </div>
 
-                            <hr>
-
-                            <!-- Contraseña (Opcional) -->
-                            <div class="mb-3">
-                                <label for="password" class="form-label fw-bold">Nueva Contraseña</label>
-                                <input type="password" class="form-control @error('password') is-invalid @enderror"
-                                    id="password" name="password" placeholder="Dejar vacío para no cambiar">
-                                <div class="form-text">Solo complete este campo si desea cambiar la contraseña actual.</div>
-                                @error('password')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <!-- Botón Guardar -->
+                            <!-- Botones de Acción -->
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                                <a class="btn btn-danger fw-bold" href="{{ route('usuarios.index') }}">
+                                    <i class="bi bi-x-circle me-2"></i> Cancelar
+                                </a>
+
                                 <button type="submit" class="btn btn-success fw-bold">
                                     <i class="bi bi-check-circle me-2"></i> Guardar Cambios
                                 </button>

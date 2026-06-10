@@ -15,7 +15,7 @@ class UserController extends Controller
     public function index()
     {
         // Ordenamos: primero activos (desc), luego por nombre (asc)
-        $users = User::orderBy('active', 'asc')
+        $users = User::orderBy('active', 'desc')
             ->orderBy('name', 'asc')
             ->paginate(5);
 

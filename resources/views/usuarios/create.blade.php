@@ -2,17 +2,8 @@
 
 @section('content')
     <div class="container">
-        <div class="row justify-content-center mt-3">
+        <div class="row justify-content-center mt-4">
             <div class="col-md-8">
-
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <!-- Botón Cancelar -->
-                    <a class="btn btn-danger fw-bold" href="{{ route('usuarios.index') }}">
-                        <i class="bi bi-x-circle me-2"></i> Cancelar
-                    </a>
-                    <h4 class="mb-0 text-muted">Nuevo Usuario</h4>
-                </div>
-
                 <div class="card shadow">
                     <div class="card-header bg-custom-gradient text-white">
                         <h5 class="mb-0">Registrar Usuario en el Sistema</h5>
@@ -42,48 +33,66 @@
                                 @enderror
                             </div>
 
-                            <!-- Rol -->
-                            <div class="mb-3">
-                                <label for="role" class="form-label fw-bold">Rol del Sistema</label>
-                                <select class="form-select @error('role') is-invalid @enderror" id="role"
-                                    name="role" required>
-                                    <option value="1" {{ old('role') == 1 ? 'selected' : '' }}>Admin</option>
-                                    <option value="2" {{ old('role') == 2 ? 'selected' : '' }}>Editor</option>
-                                    <option value="3" {{ old('role') == 3 ? 'selected' : '' }}>Visitante</option>
-                                </select>
-                                @error('role')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                            <div class="row mb-3 align-items-end justify-content-between">
+                                <!-- Rol (Izquierda) -->
+                                <div class="col-md-7">
+                                    <label for="role" class="form-label fw-bold">Rol del Sistema</label>
+                                    <select class="form-select @error('role') is-invalid @enderror" id="role"
+                                        name="role" required>
+                                        <option value="1" {{ old('role') == 1 ? 'selected' : '' }}>Admin</option>
+                                        <option value="2" {{ old('role') == 2 ? 'selected' : '' }}>Editor</option>
+                                        <option value="3" {{ old('role') == 3 ? 'selected' : '' }}>Visitante</option>
+                                    </select>
+                                    @error('role')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <!-- Estado (Derecha) -->
+                                <div class="col-auto">
+                                    <div class="form-check mb-1">
+                                        <input type="checkbox"
+                                            class="form-check-input @error('active') is-invalid @enderror" id="active"
+                                            name="active" {{ old('active', true) ? 'checked' : '' }}>
+                                        <label class="form-check-label fw-bold" for="active">Usuario Activo</label>
+                                        @error('active')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
                             </div>
 
-                            <!-- Estado (Checkbox) - Por defecto se crea activo -->
-                            <div class="mb-3 form-check">
-                                <input type="checkbox" class="form-check-input" id="active" name="active"
-                                    {{ old('active', true) ? 'checked' : '' }}>
-                                <label class="form-check-label fw-bold" for="active">Usuario Activo</label>
-                            </div>
+                            <!-- Fila para Contraseñas -->
+                            <div class="row mb-3">
+                                <!-- Contraseña (Izquierda) -->
+                                <div class="col-md-6">
+                                    <label for="password" class="form-label fw-bold">Contraseña</label>
+                                    <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                        id="password" name="password" required>
+                                    @error('password')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
 
-                            <hr>
-
-                            <!-- Contraseña -->
-                            <div class="mb-3">
-                                <label for="password" class="form-label fw-bold">Contraseña</label>
-                                <input type="password" class="form-control @error('password') is-invalid @enderror"
-                                    id="password" name="password" required>
-                                @error('password')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <!-- Confirmar Contraseña -->
-                            <div class="mb-3">
-                                <label for="password_confirmation" class="form-label fw-bold">Confirmar Contraseña</label>
-                                <input type="password" class="form-control" id="password_confirmation"
-                                    name="password_confirmation" required>
+                                <!-- Confirmar Contraseña (Derecha) -->
+                                <div class="col-md-6">
+                                    <label for="password_confirmation" class="form-label fw-bold">Confirmar
+                                        Contraseña</label>
+                                    <input type="password"
+                                        class="form-control @error('password_confirmation') is-invalid @enderror"
+                                        id="password_confirmation" name="password_confirmation" required>
+                                    @error('password_confirmation')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
                             </div>
 
                             <!-- Botón Guardar -->
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                                <a class="btn btn-danger fw-bold" href="{{ route('usuarios.index') }}">
+                                    <i class="bi bi-x-circle me-2"></i> Cancelar
+                                </a>
+
                                 <button type="submit" class="btn btn-success fw-bold">
                                     <i class="bi bi-person-plus-fill me-2"></i> Crear Usuario
                                 </button>
