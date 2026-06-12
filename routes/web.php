@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LogAccessController;
+use App\Http\Controllers\LogChangeController;
 use App\Http\Controllers\UserController; // <-- Agregar el controlador
 
 Route::get('/', function () {
@@ -23,4 +24,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Usuarios (Resource) - CORRECCIÓN AQUÍ
     Route::resource('usuarios', UserController::class)->parameter('usuarios', 'user');
+
+    // Log de cambios <-- AGREGAR ESTA LÍNEA
+    Route::get('/log-change', [LogChangeController::class, 'index'])->name('log-change.index');
 });

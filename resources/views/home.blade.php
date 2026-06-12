@@ -62,7 +62,8 @@
                                         class="text-white text-decoration-none d-block mb-2">
                                         <i class="bi bi-door-open me-2"></i> Accesos
                                     </a>
-                                    <a href="#" class="text-white text-decoration-none d-block">
+                                    <a href="{{ route('log-change.index') }}"
+                                        class="text-white text-decoration-none d-block">
                                         <i class="bi bi-pencil-square me-2"></i> Cambios
                                     </a>
                                 </div>
@@ -246,7 +247,7 @@
 
         #accordionMenu .collapse .ps-3>a:hover {
             /* background-color: #0d6efd;
-                    color: white !important; */
+                        color: white !important; */
             background-color: #ffffff;
             color: #000000 !important;
             /* Necesario para sobreescribir text-white-50 */

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\LogChange; // <-- 1. IMPORTAR EL MODELO
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -12,19 +13,61 @@ class UserController extends Controller
     /**
      * Mostrar una lista de todos los usuarios.
      */
-    public function index()
+    /**
+     * Mostrar una lista de todos los usuarios.
+     */
+    /**
+     * Mostrar una lista de todos los usuarios.
+     */
+    public function index(Request $request)
     {
-        // Ordenamos: primero activos (desc), luego por nombre (asc)
-        $users = User::orderBy('active', 'desc')
+        // Iniciar la consulta
+        $query = User::query();
+
+        // Aplicar filtro de búsqueda general si se ingresó algo
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $searchLower = strtolower($search); // Convertimos a minúsculas
+
+            // Mapeo de palabras clave a valores de la base de datos (stripos ya es insensible a mayúsculas)
+            $roleSearch = null;
+            if (stripos($search, 'admin') !== false) $roleSearch = 1;
+            elseif (stripos($search, 'editor') !== false) $roleSearch = 2;
+            elseif (stripos($search, 'visitante') !== false) $roleSearch = 3;
+
+            $statusSearch = null;
+            if (stripos($search, 'activo') !== false) $statusSearch = 1;
+            if (stripos($search, 'inactivo') !== false) $statusSearch = 0;
+
+            // Agrupar las condiciones con OR
+            $query->where(function ($q) use ($searchLower, $roleSearch, $statusSearch) {
+
+                // Usamos whereRaw con LOWER() para ignorar mayúsculas/minúsculas en la BD
+                $q->whereRaw('LOWER(name) LIKE ?', ["%{$searchLower}%"])
+                    ->orWhereRaw('LOWER(email) LIKE ?', ["%{$searchLower}%"]);
+
+                // Si la palabra escrita coincide con un rol, lo agrega a la búsqueda
+                if ($roleSearch !== null) {
+                    $q->orWhere('role', $roleSearch);
+                }
+
+                // Si la palabra escrita coincide con un estado, lo agrega a la búsqueda
+                if ($statusSearch !== null) {
+                    $q->orWhere('active', $statusSearch);
+                }
+            });
+        }
+
+        // Ordenar y paginar manteniendo los parámetros en la URL
+        $users = $query->orderBy('active', 'desc')
             ->orderBy('name', 'asc')
-            ->paginate(5);
+            ->paginate(5)
+            ->appends($request->query());
 
         return view('usuarios.index', compact('users'));
     }
 
-    /**
-     * Mostrar el formulario para crear un nuevo usuario.
-     */
+
     public function create()
     {
         return view('usuarios.create');
@@ -35,19 +78,17 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        // Mensajes personalizados en español
         $mensajes = [
             'name.required' => 'El campo nombre es obligatorio.',
             'email.required' => 'El correo electrónico es obligatorio.',
             'email.email' => 'El formato del correo electrónico no es válido.',
             'email.unique' => 'Este correo electrónico ya está registrado en el sistema.',
             'password.required' => 'La contraseña es obligatoria.',
-            'password.min' => 'La contraseña debe tener al menos :min caracteres.', // El :min se reemplaza automáticamente por el número
+            'password.min' => 'La contraseña debe tener al menos :min caracteres.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
             'role.required' => 'Debe seleccionar un rol para el usuario.',
         ];
 
-        // Validación de los datos del formulario (agregamos el arreglo $mensajes como segundo parámetro)
         $validated = $request->validate([
             'name'                  => 'required|string|max:255',
             'email'                 => 'required|string|email|max:255|unique:users',
@@ -55,38 +96,30 @@ class UserController extends Controller
             'role'                  => 'required|integer',
         ], $mensajes);
 
-        // Encriptar la contraseña
         $validated['password'] = Hash::make($validated['password']);
-
-        // Manejo del campo active
         $validated['active'] = $request->has('active');
-
-        // Registrar quién está creando este usuario
         $validated['create_for'] = Auth::id();
 
-        // Crear el usuario
-        User::create($validated);
+        $user = User::create($validated); // Guardamos el usuario en una variable
+
+        // <-- 2. REGISTRAR LOG DE CARGA
+        LogChange::create([
+            'user_id' => Auth::id(),
+            'table' => 'users',
+            'obs' => 'Carga de nuevo usuario: ' . $user->email,
+            'ip' => $request->ip(),
+            'created_at' => now(),
+        ]);
 
         return redirect()->route('usuarios.index')->with('success', 'Usuario creado exitosamente.');
     }
 
-    /**
-     * Mostrar los datos de un usuario específico.
-     */
     public function show(User $user)
     {
-        // Cargamos la relación del usuario que lo creó
         $user->load('creator');
-
         return view('usuarios.show', compact('user'));
     }
 
-    /**
-     * Mostrar el formulario para editar un usuario existente.
-     */
-    /**
-     * Mostrar el formulario para editar un usuario existente.
-     */
     public function edit(User $user)
     {
         return view('usuarios.edit', compact('user'));
@@ -97,27 +130,69 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        // Validación de los datos
         $validated = $request->validate([
             'name'     => 'required|string|max:255',
-            'email'    => 'required|string|email|max:255|unique:users,email,' . $user->id, // Ignora el email actual del usuario
+            'email'    => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'role'     => 'required|integer',
-            'password' => 'nullable|string|min:8', // La contraseña es opcional al editar
+            'password' => 'nullable|string|min:8',
         ]);
 
-        // Manejo del campo active (si el checkbox no se marca, no viene en el request)
         $validated['active'] = $request->has('active');
 
-        // Si el campo password viene vacío, lo quitamos del array para que no se sobreescriba en la BD
         if (empty($validated['password'])) {
             unset($validated['password']);
         } else {
-            // Si escribió una nueva contraseña, la encriptamos
             $validated['password'] = Hash::make($validated['password']);
         }
 
-        // Actualizar el usuario
+        // <-- 3. CAPTURAR DATOS ORIGINALES ANTES DE ACTUALIZAR
+        $originalData = $user->getOriginal();
+
         $user->update($validated);
+
+        // <-- 4. CONSTRUIR LA OBSERVACIÓN Y REGISTRAR LOG DE MODIFICACIÓN
+        $cambios = [];
+        $roles = [1 => 'Admin', 2 => 'Editor', 3 => 'Visitante'];
+
+        foreach ($validated as $campo => $nuevoValor) {
+            $valorAntiguo = $originalData[$campo] ?? null;
+
+            // No logeamos la contraseña real por seguridad, solo si se cambió
+            if ($campo === 'password') {
+                if (!empty($nuevoValor)) {
+                    $cambios[] = "Contraseña actualizada";
+                }
+                continue;
+            }
+
+            // Formatear el campo 'active' para que sea legible
+            if ($campo === 'active') {
+                $valorAntiguo = $valorAntiguo ? 'Activo' : 'Inactivo';
+                $nuevoValor = $nuevoValor ? 'Activo' : 'Inactivo';
+            }
+
+            // Formatear el campo 'role' para que diga el nombre, no el número
+            if ($campo === 'role') {
+                $valorAntiguo = $roles[$valorAntiguo] ?? $valorAntiguo;
+                $nuevoValor = $roles[$nuevoValor] ?? $nuevoValor;
+            }
+
+            // Comparar si el valor realmente cambió
+            if ((string)$valorAntiguo !== (string)$nuevoValor) {
+                $cambios[] = "{$campo}: antes '{$valorAntiguo}' - ahora '{$nuevoValor}'";
+            }
+        }
+
+        // Solo guardar el log si hubo cambios reales
+        if (!empty($cambios)) {
+            LogChange::create([
+                'user_id' => Auth::id(),
+                'table' => 'users',
+                'obs' => 'Modificación de usuario ' . $user->email . ' | ' . implode(', ', $cambios),
+                'ip' => $request->ip(),
+                'created_at' => now(),
+            ]);
+        }
 
         return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado exitosamente.');
     }
@@ -127,17 +202,24 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        // Validación: No puedes inhabilitarte a ti mismo
         if ($user->id === Auth::id()) {
             return redirect()->route('usuarios.index')->with('error', 'No puedes inhabilitarte a ti mismo.');
         }
 
-        // Invierte el estado actual: si es true lo pone en false, si es false lo pone en true
         $user->active = !$user->active;
         $user->save();
 
-        // Mensaje dinámico según el nuevo estado
         $estado = $user->active ? 'habilitado' : 'inhabilitado';
+        $accion = $user->active ? 'Habilitación' : 'Inhabilitación';
+
+        // <-- 5. REGISTRAR LOG DE HABILITAR/INHABILITAR
+        LogChange::create([
+            'user_id' => Auth::id(),
+            'table' => 'users',
+            'obs' => "{$accion} de usuario: {$user->email}",
+            'ip' => request()->ip(), // Aquí usamos el helper global de Laravel
+            'created_at' => now(),
+        ]);
 
         return redirect()->route('usuarios.index')->with('success', "Usuario {$estado} exitosamente.");
     }

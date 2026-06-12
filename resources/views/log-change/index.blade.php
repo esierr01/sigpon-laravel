@@ -12,19 +12,19 @@
                     <!-- Cabecera con Barra de Búsqueda -->
                     <div class="card-header bg-custom-gradient text-white">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">Registro de Accesos al Sistema</h5>
+                            <h5 class="mb-0">Registro de Cambios en el Sistema</h5>
 
-                            <form action="{{ route('log-access.index') }}" method="GET"
+                            <form action="{{ route('log-change.index') }}" method="GET"
                                 class="d-flex gap-2 align-items-center">
                                 <div class="input-group input-group-sm" style="width: 300px;">
                                     <input type="text" name="search" class="form-control"
-                                        placeholder="Correo, resultado, obs..." value="{{ request('search') }}"
+                                        placeholder="Buscar usuario, tabla, obs..." value="{{ request('search') }}"
                                         aria-label="Buscar">
                                     <button type="submit" class="btn btn-light" title="Buscar">
                                         <i class="bi bi-search"></i>
                                     </button>
                                 </div>
-                                <a href="{{ route('log-access.index') }}" class="btn btn-sm btn-outline-light"
+                                <a href="{{ route('log-change.index') }}" class="btn btn-sm btn-outline-light"
                                     title="Limpiar filtros">
                                     <i class="bi bi-x-circle"></i>
                                 </a>
@@ -37,29 +37,33 @@
                             <table class="table table-striped table-hover">
                                 <thead class="table-dark">
                                     <tr>
-                                        <th>Correo</th>
-                                        <th>Resultado</th>
+                                        <th>Usuario</th>
+                                        <th>Tabla</th>
                                         <th>Observación</th>
+                                        <th>Dirección IP</th>
                                         <th>Fecha y Hora</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse($logs as $log)
                                         <tr>
-                                            <td>{{ $log->mail }}</td>
                                             <td>
-                                                @if ($log->result)
-                                                    <span class="badge bg-success">Exitoso</span>
+                                                @if ($log->user)
+                                                    <span class="fw-bold">{{ $log->user->name }}</span>
                                                 @else
-                                                    <span class="badge bg-danger">Fallido</span>
+                                                    <span class="text-muted">Sistema / Eliminado</span>
                                                 @endif
                                             </td>
-                                            <td>{{ $log->obs ?? ' ' }}</td>
+                                            <td>
+                                                <span class="badge bg-secondary">{{ $log->table }}</span>
+                                            </td>
+                                            <td style="width: 560px">{{ $log->obs }}</td>
+                                            <td><code>{{ $log->ip }}</code></td>
                                             <td>{{ $log->created_at->format('d/m/Y H:i:s') }}</td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="4" class="text-center">No hay registros de acceso con los
+                                            <td colspan="5" class="text-center">No hay registros de cambios con los
                                                 filtros aplicados</td>
                                         </tr>
                                     @endforelse
@@ -115,7 +119,7 @@
             transition-duration: 0.3s;
             overflow: hidden;
             position: relative;
-            margin-bottom: 10px
+            margin-bottom: 10px;
         }
 
         .svgIcon {
@@ -153,6 +157,11 @@
             opacity: 1;
             bottom: unset;
             transition-duration: 0.3s;
+        }
+
+        /* Estilo para la dirección IP */
+        code {
+            color: var(--bs-info);
         }
     </style>
 @endpush

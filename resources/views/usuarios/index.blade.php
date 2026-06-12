@@ -6,22 +6,36 @@
             <div class="col-md-12">
 
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <a href="{{ route('home') }}" class="button">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="svgIcon" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd"
-                                d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8" />
-                        </svg>
-                    </a>
+                    <a href="{{ route('home') }}" class="btn btn-primary btn-sm"><i class="bi bi-box-arrow-left me-2"></i>
+                        Regresar</a>
 
-                    <!-- Botón Crear Nuevo Usuario -->
-                    <a class="btn btn-success text-light fw-bold" href="{{ route('usuarios.create') }}">
+                    <a class="btn btn-success btn-sm" href="{{ route('usuarios.create') }}">
                         <i class="bi bi-person-plus-fill me-2"></i> Nuevo Usuario
                     </a>
                 </div>
 
                 <div class="card shadow">
+                    <!-- Cabecera con Barra de Búsqueda -->
                     <div class="card-header bg-custom-gradient text-white">
-                        <h5 class="mb-0">Gestión de Usuarios</h5>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Gestión de Usuarios</h5>
+
+                            <form action="{{ route('usuarios.index') }}" method="GET"
+                                class="d-flex gap-2 align-items-center">
+                                <div class="input-group input-group-sm" style="width: 300px;">
+                                    <input type="text" name="search" class="form-control"
+                                        placeholder="Buscar nombre, correo, rol, estado..." value="{{ request('search') }}"
+                                        aria-label="Buscar">
+                                    <button type="submit" class="btn btn-light" title="Buscar">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                </div>
+                                <a href="{{ route('usuarios.index') }}" class="btn btn-sm btn-outline-light"
+                                    title="Limpiar filtros">
+                                    <i class="bi bi-x-circle"></i>
+                                </a>
+                            </form>
+                        </div>
                     </div>
 
                     <div class="card-body">
@@ -40,7 +54,7 @@
                                 <tbody>
                                     @forelse($users as $user)
                                         <tr>
-                                            <td>{{ $user->name }}</td>
+                                            <td style="width: 280px">{{ $user->name }}</td>
                                             <td>{{ $user->email }}</td>
                                             <td>
                                                 @if ($user->role == 1)
@@ -60,43 +74,37 @@
                                             </td>
                                             <td>{{ $user->created_at->format('d/m/Y H:i:s') }}</td>
                                             <td class="text-center">
-                                                <!-- Botón Ver Detalle -->
+
                                                 <a href="{{ route('usuarios.show', $user->id) }}"
-                                                    class="btn btn-sm btn-info me-1" title="Ver Detalles">
-                                                    <i class="bi bi-eye"></i>
-                                                </a>
+                                                    class="btn btn-outline-primary btn-sm">Detalle</a>
 
-                                                <!-- Botón Editar -->
                                                 <a href="{{ route('usuarios.edit', $user->id) }}"
-                                                    class="btn btn-sm btn-warning me-1" title="Editar">
-                                                    <i class="bi bi-pencil-square"></i>
-                                                </a>
+                                                    class="btn btn-outline-info btn-sm">Editar</a>
 
-                                                <!-- Botones para Conmutar Estado (Sin formulario, usan el modal) -->
                                                 @if (Auth::id() !== $user->id)
                                                     @if ($user->active)
                                                         <button type="button"
-                                                            class="btn btn-sm btn-danger btn-toggle-status"
-                                                            title="Inhabilitar"
+                                                            class="btn btn-outline-danger btn-sm btn-toggle-status"
                                                             data-url="{{ route('usuarios.destroy', $user->id) }}"
                                                             data-action="inhabilitar">
-                                                            <i class="bi bi-x-circle"></i>
+                                                            Inhabilitar
                                                         </button>
                                                     @else
                                                         <button type="button"
-                                                            class="btn btn-sm btn-success btn-toggle-status"
-                                                            title="Habilitar"
+                                                            class="btn btn-outline-success btn-sm btn-toggle-status"
                                                             data-url="{{ route('usuarios.destroy', $user->id) }}"
                                                             data-action="habilitar">
-                                                            <i class="bi bi-check-circle"></i>
+                                                            Habilitar
                                                         </button>
                                                     @endif
                                                 @endif
+
                                             </td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="6" class="text-center">No hay usuarios registrados</td>
+                                            <td colspan="6" class="text-center">No hay usuarios registrados con los
+                                                filtros aplicados</td>
                                         </tr>
                                     @endforelse
                                 </tbody>
@@ -104,7 +112,7 @@
                         </div>
 
                         <div class="mt-3">
-                            {{ $users->links() }}
+                            {{ $users->appends(request()->query())->links() }}
                         </div>
                     </div>
                 </div>
@@ -223,29 +231,24 @@
 
             toggleButtons.forEach(button => {
                 button.addEventListener('click', function() {
-                    // Leer los datos del botón clickeado
                     const url = this.dataset.url;
-                    const action = this.dataset.action; // 'inhabilitar' o 'habilitar'
+                    const action = this.dataset.action;
 
-                    // Cambiar el contenido del modal según la acción
                     if (action === 'inhabilitar') {
                         modalTitle.textContent = 'Confirmar Inhabilitación';
                         modalBody.textContent =
                             '¿Estás seguro de inhabilitar a este usuario? No podrá acceder al sistema.';
                         modalConfirmBtn.textContent = 'Sí, Inhabilitar';
-                        modalConfirmBtn.className = 'btn btn-danger'; // Botón rojo
+                        modalConfirmBtn.className = 'btn btn-danger';
                     } else {
                         modalTitle.textContent = 'Confirmar Habilitación';
                         modalBody.textContent =
                             '¿Estás seguro de habilitar a este usuario? Volverá a tener acceso al sistema.';
                         modalConfirmBtn.textContent = 'Sí, Habilitar';
-                        modalConfirmBtn.className = 'btn btn-success'; // Botón verde
+                        modalConfirmBtn.className = 'btn btn-success';
                     }
 
-                    // Asignar la URL al formulario del modal
                     modalForm.action = url;
-
-                    // Mostrar el modal
                     bsModal.show();
                 });
             });
