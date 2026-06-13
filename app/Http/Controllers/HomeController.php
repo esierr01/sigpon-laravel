@@ -37,4 +37,21 @@ class HomeController extends Controller
         // Pasar el rol y nombre del rol a la vista
         return view('home', compact('userRole', 'roleName', 'user'));
     }
+
+    public function tablas(Request $request)
+    {
+        $activeTab = $request->query('tab', 'categories');
+
+        // Cargar los datos según la pestaña activa
+        $data = match ($activeTab) {
+            'categories' => \App\Models\Category::orderBy('name')->paginate(4),
+            'units' => \App\Models\Unit::orderBy('name')->paginate(4),
+            'brand_models' => \App\Models\BrandModel::orderBy('brand')->paginate(4),
+            'suppliers' => \App\Models\Supplier::orderBy('name')->paginate(4),
+            'stores' => \App\Models\Store::orderBy('name')->paginate(4),
+            default => [],
+        };
+
+        return view('tablas', compact('activeTab', 'data'));
+    }
 }

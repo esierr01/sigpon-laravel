@@ -1,0 +1,101 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\LogChange;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class TablaController extends Controller
+{
+    // Mapeo de nombres de tabla a Modelos
+    private array $models = [
+        'categories' => \App\Models\Category::class,
+        'units' => \App\Models\Unit::class,
+        'brand_models' => \App\Models\BrandModel::class,
+        'suppliers' => \App\Models\Supplier::class,
+        'stores' => \App\Models\Store::class,
+    ];
+
+    // Reglas de validación por tabla
+    private array $rules = [
+        'categories' => ['name' => 'required|string|max:100'],
+        'units' => ['name' => 'required|string|max:50'],
+        'brand_models' => ['brand' => 'required|string|max:100', 'model' => 'required|string|max:100'],
+        'suppliers' => ['name' => 'required|string|max:100', 'address' => 'required|string|max:255', 'phone' => 'required|string|max:45', 'contact' => 'required|string|max:100', 'rif' => 'required|string|max:20'],
+        'stores' => ['name' => 'required|string|max:100', 'address' => 'required|string|max:255', 'phone' => 'required|string|max:45', 'contact' => 'required|string|max:100'],
+    ];
+
+    public function store(Request $request, string $tabla)
+    {
+        if (!isset($this->models[$tabla])) abort(404);
+
+        $validated = $request->validate($this->rules[$tabla]);
+        $modelClass = $this->models[$tabla];
+        $item = $modelClass::create($validated);
+
+        // Log de carga
+        LogChange::create([
+            'user_id' => Auth::id(),
+            'table' => $tabla,
+            'obs' => 'Carga de nuevo registro: ' . json_encode($validated),
+            'ip' => $request->ip(),
+            'created_at' => now(),
+        ]);
+
+        return redirect()->route('tablas.index', ['tab' => $tabla])->with('success', 'Registro creado exitosamente.');
+    }
+
+    public function update(Request $request, string $tabla, int $id)
+    {
+        if (!isset($this->models[$tabla])) abort(404);
+
+        $validated = $request->validate($this->rules[$tabla]);
+        $modelClass = $this->models[$tabla];
+        $item = $modelClass::findOrFail($id);
+
+        $originalData = $item->getOriginal();
+        $item->update($validated);
+
+        // Construir log de modificación
+        $cambios = [];
+        foreach ($validated as $campo => $nuevoValor) {
+            $valorAntiguo = $originalData[$campo] ?? null;
+            if ((string)$valorAntiguo !== (string)$nuevoValor) {
+                $cambios[] = "{$campo}: antes '{$valorAntiguo}' - ahora '{$nuevoValor}'";
+            }
+        }
+
+        if (!empty($cambios)) {
+            LogChange::create([
+                'user_id' => Auth::id(),
+                'table' => $tabla,
+                'obs' => 'Modificación de registro ID ' . $id . ' | ' . implode(', ', $cambios),
+                'ip' => $request->ip(),
+                'created_at' => now(),
+            ]);
+        }
+
+        return redirect()->route('tablas.index', ['tab' => $tabla])->with('success', 'Registro actualizado exitosamente.');
+    }
+
+    public function destroy(Request $request, string $tabla, int $id)
+    {
+        if (!isset($this->models[$tabla])) abort(404);
+
+        $modelClass = $this->models[$tabla];
+        $item = $modelClass::findOrFail($id);
+        $item->delete();
+
+        // Log de eliminación
+        LogChange::create([
+            'user_id' => Auth::id(),
+            'table' => $tabla,
+            'obs' => 'Eliminación de registro ID ' . $id,
+            'ip' => $request->ip(),
+            'created_at' => now(),
+        ]);
+
+        return redirect()->route('tablas.index', ['tab' => $tabla])->with('success', 'Registro eliminado exitosamente.');
+    }
+}

@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LogAccessController;
 use App\Http\Controllers\LogChangeController;
 use App\Http\Controllers\UserController; // <-- Agregar el controlador
+use App\Http\Controllers\TablaController; // <-- Agregar el controlador
 
 Route::get('/', function () {
     return view('auth.login');
@@ -27,4 +28,12 @@ Route::middleware(['auth'])->group(function () {
 
     // Log de cambios <-- AGREGAR ESTA LÍNEA
     Route::get('/log-change', [LogChangeController::class, 'index'])->name('log-change.index');
+
+    // Ruta para la vista de pestañas
+    Route::get('/tablas', [HomeController::class, 'tablas'])->name('tablas.index');
+
+    // Rutas CRUD unificadas para las 5 tablas
+    Route::post('/tablas/{tabla}', [TablaController::class, 'store'])->name('tablas.store');
+    Route::put('/tablas/{tabla}/{id}', [TablaController::class, 'update'])->name('tablas.update');
+    Route::delete('/tablas/{tabla}/{id}', [TablaController::class, 'destroy'])->name('tablas.destroy');
 });

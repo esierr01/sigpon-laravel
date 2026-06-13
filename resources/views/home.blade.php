@@ -90,7 +90,8 @@
                                         class="text-white text-decoration-none d-block mb-2">
                                         <i class="bi bi-people me-2"></i> Usuarios
                                     </a>
-                                    <a href="#" class="text-white text-decoration-none d-block mb-2">
+                                    <a href="{{ route('tablas.index') }}"
+                                        class="text-white text-decoration-none d-block mb-2">
                                         <i class="bi bi-table me-2"></i> Tablas
                                     </a>
                                 @endif
@@ -247,7 +248,7 @@
 
         #accordionMenu .collapse .ps-3>a:hover {
             /* background-color: #0d6efd;
-                        color: white !important; */
+                                color: white !important; */
             background-color: #ffffff;
             color: #000000 !important;
             /* Necesario para sobreescribir text-white-50 */
