@@ -1,11 +1,84 @@
-@import 'tailwindcss';
+/* resources/css/app.css */
+@import 'bootstrap/dist/css/bootstrap.min.css';
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+/* ESTILOS GLOBALES */
+.bg-custom-gradient {
+    background: #2774ae;
+    background: -webkit-linear-gradient(to right, #002E5D, #002E5D, #2774ae);
+    background: linear-gradient(to right, #002E5D, #002E5D, #2774ae);
+}
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+/* BOTON DE LOGIN, RETROCEDER */
+.bg-custom-btn-on {
+    background-color: #079e41 !important;
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+.bg-custom-btn-on:hover {
+    color: #000000 !important;
+    box-shadow: 0 0 20px #079e41 !important;
+}
+
+/* BOTON DE CANCELAR */
+.bg-custom-btn-off {
+    background-color: #4a4552 !important;
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+.bg-custom-btn-off:hover {
+    color: #000000 !important;
+    box-shadow: 0 0 20px #4a4552 !important;
+}
+
+
+/* BOTONES DE ACCIONES EN TABLAS */
+
+/* VER DETALLE */
+.bg-custom-btn-first {
+    background-color: #0c63c5 !important;
+    color: #ffffff !important;
+    font-weight: 400;
+}
+
+.bg-custom-btn-first:hover {
+    color: #000000 !important;
+    box-shadow: 0 0 20px #0c63c5 !important;
+}
+
+/* EDITAR */
+.bg-custom-btn-second {
+    background-color: #0cbfd6 !important;
+    color: #ffffff !important;
+    font-weight: 400;
+}
+
+.bg-custom-btn-second:hover {
+    color: #000000 !important;
+    box-shadow: 0 0 20px #0cbfd6 !important;
+}
+
+/* HABILITAR */
+.bg-custom-btn-terciary {
+    background-color: #ebc909 !important;
+    color: #ffffff !important;
+    font-weight: 400;
+}
+
+.bg-custom-btn-terciary:hover {
+    color: #000000 !important;
+    box-shadow: 0 0 20px #ebc909 !important;
+}
+
+/* ELIMINAR / INHABILITAR */
+.bg-custom-btn-danger {
+    background-color: #e70a2f !important;
+    color: #ffffff !important;
+    font-weight: 400;
+}
+
+.bg-custom-btn-danger:hover {
+    color: #000000 !important;
+    box-shadow: 0 0 20px #e70a2f !important;
 }

@@ -18,15 +18,28 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <!-- Scripts -->
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
-
     <style>
-        /* Gradiente personalizado para el Navbar */
-        .bg-custom-gradient {
-            background: #058fad;
-            background: -webkit-linear-gradient(to right, #0b6b8b, #00B4DB);
-            background: linear-gradient(to right, #0083B0, #00B4DB);
+        .btn-theme {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: transparent;
+            border: 0.5px solid #508494;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            padding: 0;
+        }
+
+        .btn-theme:hover {
+            background-color: #3d626d;
+            color: #ffffff;
+        }
+
+        nav {
+            height: 55px;
         }
     </style>
 </head>
@@ -36,9 +49,9 @@
         <nav class="navbar navbar-expand-lg bg-custom-gradient border-bottom border-dark-subtle">
             <div class="container">
                 <div class="d-flex align-items-center">
-                    <img src="{{ asset('image/logocantv.png') }}" class="mx-2" alt="Logo" height="40">
+                    {{-- <img src="{{ asset('image/logocantv.png') }}" class="mx-2" alt="Logo" height="40"> --}}
                     <h2 class="mb-0 text-light">{{ config('app.name', 'Laravel') }}</h2>
-                    <p class="mb-0 ms-2 text-sm text-bold fw-semibold">Sistema de Inventario GPON</p>
+                    <p class="mb-0 ms-4 text-md text-light fw-semibold">Sistema de Inventario GPON</p>
                 </div>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -55,7 +68,7 @@
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">
-                        <button class="btn" id="themeToggle">
+                        <button class="btn btn-theme" id="themeToggle">
                             <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                 fill="currentColor" class="bi bi-brightness-high" viewBox="0 0 16 16">
                                 <path
@@ -74,19 +87,16 @@
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->name }}
+                                    <span class="fw-bold text-light">{{ Auth::user()->name }}</span>
                                     @if (Auth::user()->role == 1)
-                                        <span class="badge bg-success mx-2">Admin</span>
+                                        <span class="badge bg-success mx-2 fs-7 fw-light">Admin</span>
                                     @endif
                                     @if (Auth::user()->role == 2)
-                                        <span class="badge bg-success mx-2">Editor</span>
+                                        <span class="badge bg-success mx-2 fs-7 fw-light">Editor</span>
                                     @endif
                                     @if (Auth::user()->role == 3)
-                                        <span class="badge bg-success mx-2">Visitante</span>
+                                        <span class="badge bg-success mx-2 fs-7 fw-light">Visitante</span>
                                     @endif
-                                    {{-- if (Auth::user()->role == 1) {
-                                    echo ' <span class="badge bg-success">Admin</span>';
-                                    } --}}
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
@@ -127,25 +137,41 @@
                 (window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light');
         }
 
-        function updateThemeIcon(theme) {
-            const icon = document.querySelector('#themeToggle i');
-            if (icon) {
-                icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        function updateThemeIcons(theme) {
+            const sunIcon = document.getElementById('sunIcon');
+            const moonIcon = document.getElementById('moonIcon');
+
+            if (theme === 'dark') {
+                // Modo oscuro: mostrar luna, ocultar sol
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'inline-block';
+            } else {
+                // Modo claro: mostrar sol, ocultar luna
+                sunIcon.style.display = 'inline-block';
+                moonIcon.style.display = 'none';
             }
         }
 
-        document.getElementById('themeToggle').addEventListener('click', () => {
-            const currentTheme = getTheme();
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        // Asegurar que los elementos existan antes de configurar el evento
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('themeToggle');
 
-            document.documentElement.setAttribute('data-bs-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateThemeIcon(newTheme);
+            if (themeToggle) {
+                themeToggle.addEventListener('click', () => {
+                    const currentTheme = getTheme();
+                    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+                    document.documentElement.setAttribute('data-bs-theme', newTheme);
+                    localStorage.setItem('theme', newTheme);
+                    updateThemeIcons(newTheme);
+                });
+            }
+
+            // Configurar tema inicial
+            const initialTheme = getTheme();
+            document.documentElement.setAttribute('data-bs-theme', initialTheme);
+            updateThemeIcons(initialTheme);
         });
-
-        const initialTheme = getTheme();
-        document.documentElement.setAttribute('data-bs-theme', initialTheme);
-        updateThemeIcon(initialTheme);
     </script>
 
     @stack('scripts')

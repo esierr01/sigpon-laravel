@@ -5,17 +5,31 @@
         <div class="row justify-content-center mt-3">
             <div class="col-md-12">
 
-                <a href="{{ route('home') }}" class="btn btn-primary btn-sm mb-3"><i
+                <a href="{{ route('home') }}" class="btn bg-custom-btn-on btn-sm mb-3"><i
                         class="bi bi-box-arrow-left me-2"></i>Regresar</a>
 
                 <div class="card shadow">
                     <div class="card-header bg-custom-gradient text-white">
-                        <h5 class="mb-0">Gestión de Tablas del Sistema</h5>
+                        <h5>
+                            Gestión de Tablas del Sistema (Tabla de
+                            @if ($activeTab == 'categories')
+                                Categorías
+                            @elseif ($activeTab == 'units')
+                                Unidades
+                            @elseif ($activeTab == 'brand_models')
+                                Marcas/Modelos
+                            @elseif ($activeTab == 'suppliers')
+                                Proveedores
+                            @elseif ($activeTab == 'stores')
+                                Almacenes
+                            @endif
+                            )
+                        </h5>
                     </div>
 
                     <div class="card-body">
                         <!-- Pestañas de Navegación -->
-                        <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
+                        <ul class="nav nav-tabs mb-1" id="myTab" role="tablist">
                             <li class="nav-item"><a class="nav-link {{ $activeTab == 'categories' ? 'active' : '' }}"
                                     href="{{ route('tablas.index', ['tab' => 'categories']) }}">Categorías</a></li>
                             <li class="nav-item"><a class="nav-link {{ $activeTab == 'units' ? 'active' : '' }}"
@@ -30,7 +44,7 @@
 
                         <!-- Botón Agregar según pestaña -->
                         <div class="d-flex justify-content-end mb-2">
-                            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal"
+                            <button type="button" class="btn bg-custom-btn-first btn-sm" data-bs-toggle="modal"
                                 data-bs-target="#modalCrear">
                                 <i class="bi bi-plus-circle me-2"></i> Nuevo Registro
                             </button>
@@ -82,9 +96,9 @@
 
                                             <td>{{ $item->created_at->format('d/m/Y H:i:s') }}</td>
 
-                                            <td class="text-center">
+                                            <td class="text-center d-flex gap-3 align-items-center justify-content-center">
                                                 <!-- Botón Editar (Abre modal) -->
-                                                <button type="button" class="btn btn-outline-info btn-sm btn-editar"
+                                                <button type="button" class="btn bg-custom-btn-second btn-sm btn-editar"
                                                     data-id="{{ $item->id }}" data-tabla="{{ $activeTab }}"
                                                     data-item="{{ json_encode($item) }}">
                                                     Editar
@@ -92,7 +106,7 @@
 
                                                 <!-- Botón Eliminar (Usa el modal existente) -->
                                                 <button type="button"
-                                                    class="btn btn-outline-danger btn-sm btn-toggle-status"
+                                                    class="btn bg-custom-btn-danger btn-sm btn-toggle-status"
                                                     data-url="{{ route('tablas.destroy', ['tabla' => $activeTab, 'id' => $item->id]) }}"
                                                     data-action="eliminar">
                                                     Eliminar
@@ -128,8 +142,9 @@
                         <!-- Los inputs se inyectarán por JavaScript según la pestaña -->
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-success">Guardar</button>
+                        <button type="button" class="btn bg-custom-btn-off btn-sm"
+                            data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn bg-custom-btn-on btn-sm">Guardar Datos</button>
                     </div>
                 </form>
             </div>
@@ -151,8 +166,9 @@
                         <!-- Los inputs se inyectarán por JavaScript -->
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-info text-white">Actualizar</button>
+                        <button type="button" class="btn bg-custom-btn-off btn-sm"
+                            data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn bg-custom-btn-on btn-sm">Guardar Cambios</button>
                     </div>
                 </form>
             </div>
@@ -169,10 +185,11 @@
                 </div>
                 <div class="modal-body" id="confirmToggleModalBody">¿Estás seguro de realizar esta acción?</div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn bg-custom-btn-off btn-sm" data-bs-dismiss="modal">No</button>
                     <form id="modalToggleForm" method="POST" action="">
                         @csrf @method('DELETE')
-                        <button type="submit" class="btn btn-danger" id="modalConfirmBtn">Sí, Eliminar</button>
+                        <button type="submit" class="btn bg-custom-btn-danger btn-sm" id="modalConfirmBtn">Sí,
+                            Eliminar</button>
                     </form>
                 </div>
             </div>
@@ -182,18 +199,31 @@
 
 @push('styles')
     <style>
-        .bg-custom-gradient {
-            background: linear-gradient(to right, #0083B0, #00B4DB);
+        .nav-tabs {
+            border-bottom: none;
+            gap: 8px;
         }
 
         .nav-tabs .nav-link {
+            border-radius: 8px;
+            padding: 2px 20px;
             color: #495057;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            transition: all 0.2s;
+        }
+
+        .nav-tabs .nav-link:hover {
+            background-color: #e9ecef;
+            border-color: #dee2e6;
+            color: #0093BE;
         }
 
         .nav-tabs .nav-link.active {
-            font-weight: bold;
-            color: #0083B0;
-            border-color: #dee2e6 #dee2e6 #fff;
+            background-color: #0093BE;
+            color: white;
+            border-color: #0093BE;
+            box-shadow: 0 2px 8px rgba(0, 147, 190, 0.3);
         }
     </style>
 @endpush

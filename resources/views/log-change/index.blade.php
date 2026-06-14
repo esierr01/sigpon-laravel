@@ -5,7 +5,8 @@
         <div class="row justify-content-center mt-3">
             <div class="col-md-12">
 
-                <a href="{{ route('home') }}" class="btn btn-primary btn-sm mb-3"><i class="bi bi-box-arrow-left me-2"></i>
+                <a href="{{ route('home') }}" class="btn bg-custom-btn-on btn-sm mb-3"><i
+                        class="bi bi-box-arrow-left me-2"></i>
                     Regresar</a>
 
                 <div class="card shadow">
@@ -55,7 +56,7 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <span class="badge bg-secondary">{{ $log->table }}</span>
+                                                <span class="text-success fs-6 fw-bold">{{ $log->table }}</span>
                                             </td>
                                             <td style="width: 560px">{{ $log->obs }}</td>
                                             <td><code>{{ $log->ip }}</code></td>
@@ -93,12 +94,6 @@
         /* Aseguramos que el SVG también se ponga blanco/light al hacer hover */
         .btn-regresar-hover:hover svg {
             color: var(--bs-light) !important;
-        }
-
-        .bg-custom-gradient {
-            background: #058fad;
-            background: -webkit-linear-gradient(to right, #0b6b8b, #00B4DB);
-            background: linear-gradient(to right, #0083B0, #00B4DB);
         }
 
         /* From Uiverse.io by absent452 */

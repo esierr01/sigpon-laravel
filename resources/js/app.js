@@ -1,5 +1,4 @@
-import './bootstrap'; // Esto carga la configuración de axios, etc.
-import * as bootstrap from 'bootstrap'; // Importa la librería JS de Bootstrap
+import './bootstrap';
+import * as bootstrap from 'bootstrap';
 
-// Esta línea es la magia: la hace disponible globalmente para tus vistas
-window.bootstrap = bootstrap; 
+window.bootstrap = bootstrap;

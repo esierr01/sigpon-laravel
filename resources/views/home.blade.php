@@ -3,6 +3,7 @@
 @section('content')
     <div class="container-fluid">
         <div class="row">
+
             <!-- Menú Lateral Izquierdo -->
             <div class="col-md-3 col-lg-2 px-0 mt-3">
                 <div class="bg-custom-gradient p-3 m-2 rounded" id="accordionMenu">
@@ -16,10 +17,10 @@
                         <!-- Se agrega data-bs-parent para comportamiento acordeón -->
                         <div class="collapse mt-2" id="dashboardMenu" data-bs-parent="#accordionMenu">
                             <div class="ps-3">
-                                <a href="#" class="text-white text-decoration-none d-block mb-2">
+                                <a href="#" class="text-custom text-decoration-none d-block mb-2">
                                     <i class="bi bi-box-seam me-2"></i> Inventario
                                 </a>
-                                <a href="#" class="text-white text-decoration-none d-block">
+                                <a href="#" class="text-custom text-decoration-none d-block">
                                     <i class="bi bi-arrow-left-right me-2"></i> Movimientos
                                 </a>
                             </div>
@@ -35,14 +36,17 @@
                         </a>
                         <div class="collapse mt-2" id="reportesMenu" data-bs-parent="#accordionMenu">
                             <div class="ps-3">
-                                <a href="#" class="text-white text-decoration-none d-block mb-2">
-                                    <i class="bi bi-file-bar-graph me-2"></i> Reporte 1
+                                <a href="#" class="text-custom text-decoration-none d-block mb-2">
+                                    <i class="bi bi-file-bar-graph me-2"></i> Stock
                                 </a>
-                                <a href="#" class="text-white text-decoration-none d-block mb-2">
-                                    <i class="bi bi-file-bar-graph me-2"></i> Reporte 2
+                                <a href="#" class="text-custom text-decoration-none d-block mb-2">
+                                    <i class="bi bi-file-bar-graph me-2"></i> Bajo Stock
                                 </a>
-                                <a href="#" class="text-white text-decoration-none d-block">
-                                    <i class="bi bi-file-bar-graph me-2"></i> Reporte 3
+                                <a href="#" class="text-custom text-decoration-none d-block">
+                                    <i class="bi bi-file-bar-graph me-2"></i> Movimientos
+                                </a>
+                                <a href="#" class="text-custom text-decoration-none d-block">
+                                    <i class="bi bi-file-bar-graph me-2"></i> Historial
                                 </a>
                             </div>
                         </div>
@@ -59,11 +63,11 @@
                             <div class="collapse mt-2" id="historialMenu" data-bs-parent="#accordionMenu">
                                 <div class="ps-3">
                                     <a href="{{ route('log-access.index') }}"
-                                        class="text-white text-decoration-none d-block mb-2">
+                                        class="text-custom text-decoration-none d-block mb-2">
                                         <i class="bi bi-door-open me-2"></i> Accesos
                                     </a>
                                     <a href="{{ route('log-change.index') }}"
-                                        class="text-white text-decoration-none d-block">
+                                        class="text-custom text-decoration-none d-block">
                                         <i class="bi bi-pencil-square me-2"></i> Cambios
                                     </a>
                                 </div>
@@ -82,20 +86,21 @@
                             <div class="ps-3">
                                 @if (Auth::user()->role != 3)
                                     @if (Auth::user()->role == 1)
-                                        <a href="#" class="text-white text-decoration-none d-block mb-2">
+                                        <a href="{{ route('general.edit') }}"
+                                            class="text-custom text-decoration-none d-block mb-2">
                                             <i class="bi bi-sliders2 me-2"></i> General
                                         </a>
                                     @endif
                                     <a href="{{ route('usuarios.index') }}"
-                                        class="text-white text-decoration-none d-block mb-2">
+                                        class="text-custom text-decoration-none d-block mb-2">
                                         <i class="bi bi-people me-2"></i> Usuarios
                                     </a>
                                     <a href="{{ route('tablas.index') }}"
-                                        class="text-white text-decoration-none d-block mb-2">
+                                        class="text-custom text-decoration-none d-block mb-2">
                                         <i class="bi bi-table me-2"></i> Tablas
                                     </a>
                                 @endif
-                                <a href="#" class="text-white text-decoration-none d-block">
+                                <a href="{{ route('profile.password') }}" class="text-custom text-decoration-none d-block">
                                     <i class="bi bi-key me-2"></i> Contraseña
                                 </a>
                             </div>
@@ -109,12 +114,12 @@
             {{--  --}}
             <div class="col-md-9 col-lg-10 align-items-center">
                 <div class="p-5 align-items-center">
-                    <h2 class="mb-5 fw-bolder">Dashboard</h2>
+                    <h2 class="mb-5 degradado-texto">Dashboard</h2>
 
                     <!-- Tarjetas de Métricas -->
                     <div class="row">
                         <div class="col-md-4 mb-4">
-                            <div class="card bg-success text-white">
+                            <div class="card metric-custom-uno text-white">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
@@ -128,7 +133,7 @@
                         </div>
 
                         <div class="col-md-4 mb-4">
-                            <div class="card bg-warning text-dark">
+                            <div class="card metric-custom-dos text-dark">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
@@ -142,7 +147,7 @@
                         </div>
 
                         <div class="col-md-4 mb-4">
-                            <div class="card bg-info text-white">
+                            <div class="card metric-custom-tres text-white">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
@@ -159,7 +164,7 @@
                     <!-- Segunda fila de métricas -->
                     <div class="row mt-3">
                         <div class="col-md-4 mb-3">
-                            <div class="card bg-danger text-white">
+                            <div class="card metric-custom-cuatro text-white">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
@@ -173,7 +178,7 @@
                         </div>
 
                         <div class="col-md-4 mb-3">
-                            <div class="card bg-white text-dark border">
+                            <div class="card metric-custom-cinco text-dark border">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
@@ -187,7 +192,7 @@
                         </div>
 
                         <div class="col-md-4 mb-3">
-                            <div class="card bg-dark text-white">
+                            <div class="card metric-custom-seis text-white">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
@@ -247,8 +252,6 @@
         }
 
         #accordionMenu .collapse .ps-3>a:hover {
-            /* background-color: #0d6efd;
-                                color: white !important; */
             background-color: #ffffff;
             color: #000000 !important;
             /* Necesario para sobreescribir text-white-50 */
@@ -270,15 +273,70 @@
             transition: transform 0.3s;
         }
 
+        .text-custom {
+            color: #98b4da !important;
+        }
+
+        .degradado-texto {
+            background: linear-gradient(to right, #0f5192, #2069b3, #2774ae);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-shadow: 0 0 10px #4c6375;
+            text-align: center;
+        }
+
+        .metric-custom-uno {
+            background: #000000;
+            background: -webkit-linear-gradient(to right, #0f9b0f, #000000);
+            background: linear-gradient(to right, #0f9b0f, #000000);
+
+        }
+
+        .metric-custom-dos {
+            background: #FFE000;
+            /* fallback for old browsers */
+            background: -webkit-linear-gradient(to right, #799F0C, #FFE000);
+            /* Chrome 10-25, Safari 5.1-6 */
+            background: linear-gradient(to right, #799F0C, #FFE000);
+            /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+        }
+
+        .metric-custom-tres {
+            background: #00fff0;
+            background: -webkit-linear-gradient(to right, #0083fe, #00fff0);
+            background: linear-gradient(to right, #0083fe, #00fff0);
+        }
+
+        .metric-custom-cuatro {
+            background: #ED213A;
+            background: -webkit-linear-gradient(to right, #93291E, #ED213A);
+            background: linear-gradient(to right, #93291E, #ED213A);
+        }
+
+        .metric-custom-cinco {
+            background: #abbaab;
+            background: -webkit-linear-gradient(to right, #ffffff, #abbaab);
+            background: linear-gradient(to right, #ffffff, #abbaab);
+        }
+
+        .metric-custom-seis {
+            background: #0F2027;
+            /* fallback for old browsers */
+            background: -webkit-linear-gradient(to right, #2C5364, #203A43, #0F2027);
+            /* Chrome 10-25, Safari 5.1-6 */
+            background: linear-gradient(to right, #2C5364, #203A43, #0F2027);
+            /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+        }
+
         /* Bootstrap agrega aria-expanded="true" automáticamente al abrir */
         [aria-expanded="true"] .bi-chevron-down {
             transform: rotate(180deg);
-        }
-
-        .bg-custom-gradient {
-            background: #058fad;
-            background: -webkit-linear-gradient(to right, #0b6b8b, #00B4DB);
-            background: linear-gradient(to right, #0083B0, #00B4DB);
         }
     </style>
 @endpush

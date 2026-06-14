@@ -96,12 +96,12 @@
 
                             <!-- Botones de Acción -->
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                                <a class="btn btn-danger fw-bold" href="{{ route('usuarios.index') }}">
-                                    <i class="bi bi-x-circle me-2"></i> Cancelar
+                                <a class="btn bg-custom-btn-off btn-sm" href="{{ route('usuarios.index') }}">
+                                    Cancelar
                                 </a>
 
-                                <button type="submit" class="btn btn-success fw-bold">
-                                    <i class="bi bi-check-circle me-2"></i> Guardar Cambios
+                                <button type="submit" class="btn bg-custom-btn-on btn-sm">
+                                    Guardar Datos
                                 </button>
                             </div>
                         </form>
@@ -111,13 +111,3 @@
         </div>
     </div>
 @endsection
-
-@push('styles')
-    <style>
-        .bg-custom-gradient {
-            background: #058fad;
-            background: -webkit-linear-gradient(to right, #0b6b8b, #00B4DB);
-            background: linear-gradient(to right, #0083B0, #00B4DB);
-        }
-    </style>
-@endpush

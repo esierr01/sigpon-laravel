@@ -6,10 +6,10 @@
             <div class="col-md-12">
 
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <a href="{{ route('home') }}" class="btn btn-primary btn-sm"><i class="bi bi-box-arrow-left me-2"></i>
+                    <a href="{{ route('home') }}" class="btn bg-custom-btn-on btn-sm"><i class="bi bi-box-arrow-left me-2"></i>
                         Regresar</a>
 
-                    <a class="btn btn-success btn-sm" href="{{ route('usuarios.create') }}">
+                    <a class="btn bg-custom-btn-on btn-sm" href="{{ route('usuarios.create') }}">
                         <i class="bi bi-person-plus-fill me-2"></i> Nuevo Usuario
                     </a>
                 </div>
@@ -58,43 +58,45 @@
                                             <td>{{ $user->email }}</td>
                                             <td>
                                                 @if ($user->role == 1)
-                                                    <span class="badge bg-primary">Admin</span>
+                                                    <span class="text-primary fs-6 fw-bold">Admin</span>
                                                 @elseif ($user->role == 2)
-                                                    <span class="badge bg-warning text-dark">Editor</span>
+                                                    <span class="text-dark fs-6 fw-bold">Editor</span>
                                                 @else
-                                                    <span class="badge bg-secondary">Visitante</span>
+                                                    <span class="text-info fs-6 fw-bold">Visitante</span>
                                                 @endif
                                             </td>
                                             <td>
                                                 @if ($user->active)
-                                                    <span class="badge bg-success">Activo</span>
+                                                    <span class="text-success fs-6 fw-bold">Activo</span>
                                                 @else
-                                                    <span class="badge bg-danger">Inactivo</span>
+                                                    <span class="text-danger fs-6 fw-bold">Inactivo</span>
                                                 @endif
                                             </td>
                                             <td>{{ $user->created_at->format('d/m/Y H:i:s') }}</td>
-                                            <td class="text-center">
+                                            <td class="text-center d-flex gap-2 align-items-center justify-content-center">
 
                                                 <a href="{{ route('usuarios.show', $user->id) }}"
-                                                    class="btn btn-outline-primary btn-sm">Detalle</a>
+                                                    class="btn bg-custom-btn-first btn-sm w-25"><i class="bi bi-eye"
+                                                        title="Ver Detalle"></i></a>
 
                                                 <a href="{{ route('usuarios.edit', $user->id) }}"
-                                                    class="btn btn-outline-info btn-sm">Editar</a>
+                                                    class="btn bg-custom-btn-second btn-sm w-25"><i class="bi bi-pencil"
+                                                        title="Editar"></i></a>
 
                                                 @if (Auth::id() !== $user->id)
                                                     @if ($user->active)
                                                         <button type="button"
-                                                            class="btn btn-outline-danger btn-sm btn-toggle-status"
+                                                            class="btn bg-custom-btn-danger btn-sm btn-toggle-status w-25"
                                                             data-url="{{ route('usuarios.destroy', $user->id) }}"
-                                                            data-action="inhabilitar">
-                                                            Inhabilitar
+                                                            data-action="inhabilitar" title="Inhabilitar">
+                                                            <i class="bi bi-ban"></i>
                                                         </button>
                                                     @else
                                                         <button type="button"
-                                                            class="btn btn-outline-success btn-sm btn-toggle-status"
+                                                            class="btn bg-custom-btn-terciary btn-sm btn-toggle-status w-25"
                                                             data-url="{{ route('usuarios.destroy', $user->id) }}"
-                                                            data-action="habilitar">
-                                                            Habilitar
+                                                            data-action="habilitar" title="Habilitar">
+                                                            <i class="bi bi-check-circle"></i>
                                                         </button>
                                                     @endif
                                                 @endif
@@ -125,7 +127,7 @@
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header bg-custom-gradient text-dark">
+                <div class="modal-header bg-custom-gradient text-light">
                     <h5 class="modal-title" id="confirmToggleModalLabel">Confirmar Acción</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -134,7 +136,7 @@
                 </div>
                 <div class="modal-footer">
                     <!-- Botón NO -->
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn bg-custom-btn-off" data-bs-dismiss="modal">No</button>
 
                     <!-- Formulario oculto que se enviará si dicen que SÍ -->
                     <form id="modalToggleForm" method="POST" action="">
@@ -150,14 +152,6 @@
 
 @push('styles')
     <style>
-        .bg-custom-gradient {
-            background: #058fad;
-            background: -webkit-linear-gradient(to right, #0b6b8b, #00B4DB);
-            background: linear-gradient(to right, #0083B0, #00B4DB);
-        }
-
-        /* From Uiverse.io by absent452 */
-        /* From Uiverse.io by vinodjangid07 */
         .button {
             width: 50px;
             height: 35px;
@@ -239,13 +233,13 @@
                         modalBody.textContent =
                             '¿Estás seguro de inhabilitar a este usuario? No podrá acceder al sistema.';
                         modalConfirmBtn.textContent = 'Sí, Inhabilitar';
-                        modalConfirmBtn.className = 'btn btn-danger';
+                        modalConfirmBtn.className = 'btn bg-custom-btn-on';
                     } else {
                         modalTitle.textContent = 'Confirmar Habilitación';
                         modalBody.textContent =
                             '¿Estás seguro de habilitar a este usuario? Volverá a tener acceso al sistema.';
                         modalConfirmBtn.textContent = 'Sí, Habilitar';
-                        modalConfirmBtn.className = 'btn btn-success';
+                        modalConfirmBtn.className = 'btn bg-custom-btn-on';
                     }
 
                     modalForm.action = url;

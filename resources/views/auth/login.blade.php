@@ -9,7 +9,8 @@
             </div>
             <div class="col-md-6 mt-4">
                 <div class="card shadow-lg">
-                    <div class="card-header bg-primary font-bold text-black text-center">{{ __('Acceso al Sistema') }}</div>
+                    <div class="card-header bg-custom-gradient font-bold fs-5 text-light text-center">
+                        {{ __('Acceso al Sistema') }}</div>
 
                     <div class="card-body">
                         <form method="POST" action="{{ route('login') }}">
@@ -52,7 +53,7 @@
 
                             <div class="row mt-5 mb-2">
                                 <div class="col-md-6 offset-md-3">
-                                    <button type="submit" class="btn btn-primary w-100">
+                                    <button type="submit" class="btn bg-custom-btn-on w-100">
                                         {{ __('Login') }}
                                     </button>
 

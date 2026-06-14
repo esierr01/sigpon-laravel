@@ -6,16 +6,12 @@
             <div class="col-md-8">
 
                 <!-- Botón Regresar -->
-                <a href="{{ route('usuarios.index') }}" class="button mt-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="svgIcon" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd"
-                            d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8" />
-                    </svg>
-                </a>
+                <a href="{{ route('usuarios.index') }}" class="btn bg-custom-btn-on btn-sm"><i
+                        class="bi bi-box-arrow-left me-2"></i>
+                    Regresar</a>
 
                 <div class="card shadow mt-3">
-                    <div
-                        class="card-header bg-custom-gradient text-white d-flex justify-content-between align-items-center">
+                    <div class="card-header bg-custom-gradient text-white d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Detalles del Usuario</h5>
                         @if ($user->active)
                             <span class="badge bg-success fs-6">Activo</span>
@@ -100,14 +96,6 @@
             color: var(--bs-light) !important;
         }
 
-        .bg-custom-gradient {
-            background: #058fad;
-            background: -webkit-linear-gradient(to right, #0b6b8b, #00B4DB);
-            background: linear-gradient(to right, #0083B0, #00B4DB);
-        }
-
-        /* From Uiverse.io by absent452 */
-        /* From Uiverse.io by vinodjangid07 */
         .button {
             width: 50px;
             height: 35px;

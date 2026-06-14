@@ -223,4 +223,54 @@ class UserController extends Controller
 
         return redirect()->route('usuarios.index')->with('success', "Usuario {$estado} exitosamente.");
     }
+
+    /**
+     * Mostrar el formulario para cambiar la contraseña del usuario actual.
+     */
+    public function editPassword()
+    {
+        return view('usuarios.password');
+    }
+
+    /**
+     * Actualizar la contraseña del usuario actual.
+     */
+    public function updatePassword(Request $request)
+    {
+        $mensajes = [
+            'current_password.required' => 'Debe ingresar su contraseña actual.',
+            'password.required' => 'La nueva contraseña es obligatoria.',
+            'password.min' => 'La nueva contraseña debe tener al menos :min caracteres.',
+            'password.confirmed' => 'Las nuevas contraseñas no coinciden.',
+        ];
+
+        $validated = $request->validate([
+            'current_password' => ['required', function ($attribute, $value, $fail) {
+                // Validar que la contraseña actual ingresada sea correcta
+                if (!Hash::check($value, Auth::user()->password)) {
+                    $fail('La contraseña actual es incorrecta.');
+                }
+            }],
+            'password' => 'required|string|min:8|confirmed',
+        ], $mensajes);
+
+        // Obtener el usuario directamente del Modelo usando el ID de la sesión
+        $user = User::find(Auth::id());
+
+        // Actualizar y guardar
+        $user->password = Hash::make($validated['password']);
+        $user->save();
+
+        // Registrar en el log de cambios
+        LogChange::create([
+            'user_id' => Auth::id(),
+            'table' => 'users',
+            'obs' => 'Cambio de contraseña propio',
+            'ip' => $request->ip(),
+            'created_at' => now(),
+        ]);
+
+        // Cambiar 'password.change' por 'profile.password'
+        return redirect()->route('profile.password')->with('success', 'Contraseña actualizada exitosamente.');
+    }
 }

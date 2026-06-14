@@ -7,6 +7,7 @@ use App\Http\Controllers\LogAccessController;
 use App\Http\Controllers\LogChangeController;
 use App\Http\Controllers\UserController; // <-- Agregar el controlador
 use App\Http\Controllers\TablaController; // <-- Agregar el controlador
+use App\Http\Controllers\GeneralController; // <-- Agregar el controlador
 
 Route::get('/', function () {
     return view('auth.login');
@@ -36,4 +37,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/tablas/{tabla}', [TablaController::class, 'store'])->name('tablas.store');
     Route::put('/tablas/{tabla}/{id}', [TablaController::class, 'update'])->name('tablas.update');
     Route::delete('/tablas/{tabla}/{id}', [TablaController::class, 'destroy'])->name('tablas.destroy');
+
+    // Configuración General
+    Route::get('/configuracion', [GeneralController::class, 'edit'])->name('general.edit');
+    Route::put('/configuracion', [GeneralController::class, 'update'])->name('general.update');
+
+    // Cambio de contraseña propio (nombres de ruta personalizados)
+    Route::get('/mi-contrasena', [UserController::class, 'editPassword'])->name('profile.password');
+    Route::put('/mi-contrasena', [UserController::class, 'updatePassword'])->name('profile.password.update');
 });
