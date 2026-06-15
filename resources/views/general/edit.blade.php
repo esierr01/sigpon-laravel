@@ -48,13 +48,13 @@
                                 <div class="row mb-2 align-items-center">
                                     <div class="col-md-2 text-start">
                                         @if ($i == 1)
-                                            <span class="badge bg-primary fs-6">Stock por Almacén</span>
+                                            <span class="badge bg-info fs-6">Stock por Almacén</span>
                                         @elseif ($i == 2)
-                                            <span class="badge bg-primary fs-6">Stock Mínimo</span>
+                                            <span class="badge bg-info fs-6">Stock Mínimo</span>
                                         @elseif ($i == 3)
-                                            <span class="badge bg-primary fs-6">Movimientos</span>
+                                            <span class="badge bg-info fs-6">Movimientos</span>
                                         @elseif ($i == 4)
-                                            <span class="badge bg-primary fs-6">Historial</span>
+                                            <span class="badge bg-info fs-6">Historial</span>
                                         @endif
                                     </div>
                                     <div class="col-md-5">

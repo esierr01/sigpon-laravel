@@ -76,27 +76,25 @@
                                             <td class="text-center d-flex gap-2 align-items-center justify-content-center">
 
                                                 <a href="{{ route('usuarios.show', $user->id) }}"
-                                                    class="btn bg-custom-btn-first btn-sm w-25"><i class="bi bi-eye"
-                                                        title="Ver Detalle"></i></a>
+                                                    class="btn bg-custom-btn-first btn-sm">Detalle</a>
 
                                                 <a href="{{ route('usuarios.edit', $user->id) }}"
-                                                    class="btn bg-custom-btn-second btn-sm w-25"><i class="bi bi-pencil"
-                                                        title="Editar"></i></a>
+                                                    class="btn bg-custom-btn-second btn-sm">Editar</a>
 
                                                 @if (Auth::id() !== $user->id)
                                                     @if ($user->active)
                                                         <button type="button"
-                                                            class="btn bg-custom-btn-danger btn-sm btn-toggle-status w-25"
+                                                            class="btn bg-custom-btn-danger btn-sm btn-toggle-status"
                                                             data-url="{{ route('usuarios.destroy', $user->id) }}"
-                                                            data-action="inhabilitar" title="Inhabilitar">
-                                                            <i class="bi bi-ban"></i>
+                                                            data-action="inhabilitar">
+                                                            Inhabilitar
                                                         </button>
                                                     @else
                                                         <button type="button"
-                                                            class="btn bg-custom-btn-terciary btn-sm btn-toggle-status w-25"
+                                                            class="btn bg-custom-btn-terciary btn-sm btn-toggle-status"
                                                             data-url="{{ route('usuarios.destroy', $user->id) }}"
-                                                            data-action="habilitar" title="Habilitar">
-                                                            <i class="bi bi-check-circle"></i>
+                                                            data-action="habilitar">
+                                                            Habilitar
                                                         </button>
                                                     @endif
                                                 @endif

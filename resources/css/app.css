@@ -61,14 +61,14 @@
 
 /* HABILITAR */
 .bg-custom-btn-terciary {
-    background-color: #ebc909 !important;
+    background-color: #e08712 !important;
     color: #ffffff !important;
     font-weight: 400;
 }
 
 .bg-custom-btn-terciary:hover {
     color: #000000 !important;
-    box-shadow: 0 0 20px #ebc909 !important;
+    box-shadow: 0 0 20px #e08712 !important;
 }
 
 /* ELIMINAR / INHABILITAR */
