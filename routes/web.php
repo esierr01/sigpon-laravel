@@ -8,6 +8,8 @@ use App\Http\Controllers\LogChangeController;
 use App\Http\Controllers\UserController; // <-- Agregar el controlador
 use App\Http\Controllers\TablaController; // <-- Agregar el controlador
 use App\Http\Controllers\GeneralController; // <-- Agregar el controlador
+use App\Http\Controllers\InventoryController; // <-- Agregar el controlador
+use App\Http\Controllers\MovementController; // <-- Agregar el controlador
 
 Route::get('/', function () {
     return view('auth.login');
@@ -45,4 +47,10 @@ Route::middleware(['auth'])->group(function () {
     // Cambio de contraseña propio (nombres de ruta personalizados)
     Route::get('/mi-contrasena', [UserController::class, 'editPassword'])->name('profile.password');
     Route::put('/mi-contrasena', [UserController::class, 'updatePassword'])->name('profile.password.update');
+
+    // Inventario y Movimientos
+    Route::get('/inventario', [InventoryController::class, 'index'])->name('inventory.index');
+    Route::get('/movimientos', [MovementController::class, 'index'])->name('movements.index');
+    Route::post('/movimientos', [MovementController::class, 'store'])->name('movements.store');
+    Route::get('/movimientos/{movement}', [MovementController::class, 'show'])->name('movements.show');
 });

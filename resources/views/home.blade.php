@@ -17,12 +17,13 @@
                         <!-- Se agrega data-bs-parent para comportamiento acordeón -->
                         <div class="collapse mt-2" id="dashboardMenu" data-bs-parent="#accordionMenu">
                             <div class="ps-3">
-                                <a href="#" class="text-custom text-decoration-none d-block mb-2">
+                                <a href="{{ route('inventory.index') }}"
+                                    class="text-custom text-decoration-none d-block mb-2">
                                     <i class="bi bi-box-seam me-2"></i> Inventario
                                 </a>
-                                <a href="#" class="text-custom text-decoration-none d-block">
-                                    <i class="bi bi-arrow-left-right me-2"></i> Movimientos
-                                </a>
+                                <a href="{{ route('movements.index', ['from' => 'home']) }}"
+                                    class="text-custom text-decoration-none d-block"><i
+                                        class="bi bi-arrow-left-right me-2"></i> Movimientos</a>
                             </div>
                         </div>
                     </div>
