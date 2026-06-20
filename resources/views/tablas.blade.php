@@ -28,6 +28,20 @@
                     </div>
 
                     <div class="card-body">
+                        @if (session('success'))
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        @endif
+
+                        @if ($errors->any())
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <strong>Error:</strong> {{ $errors->first('error_general') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        @endif
+
                         <!-- Pestañas de Navegación -->
                         <ul class="nav nav-tabs mb-1" id="myTab" role="tablist">
                             <li class="nav-item"><a class="nav-link {{ $activeTab == 'categories' ? 'active' : '' }}"
@@ -35,7 +49,8 @@
                             <li class="nav-item"><a class="nav-link {{ $activeTab == 'units' ? 'active' : '' }}"
                                     href="{{ route('tablas.index', ['tab' => 'units']) }}">Unidades</a></li>
                             <li class="nav-item"><a class="nav-link {{ $activeTab == 'brand_models' ? 'active' : '' }}"
-                                    href="{{ route('tablas.index', ['tab' => 'brand_models']) }}">Marcas/Modelos</a></li>
+                                    href="{{ route('tablas.index', ['tab' => 'brand_models']) }}">Marcas/Modelos</a>
+                            </li>
                             <li class="nav-item"><a class="nav-link {{ $activeTab == 'suppliers' ? 'active' : '' }}"
                                     href="{{ route('tablas.index', ['tab' => 'suppliers']) }}">Proveedores</a></li>
                             <li class="nav-item"><a class="nav-link {{ $activeTab == 'stores' ? 'active' : '' }}"

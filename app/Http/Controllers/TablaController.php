@@ -85,6 +85,38 @@ class TablaController extends Controller
 
         $modelClass = $this->models[$tabla];
         $item = $modelClass::findOrFail($id);
+
+        // --- VALIDACIÓN DE INTEGRIDAD REFERENCIAL ---
+        $inUse = false;
+        $mensajeError = '';
+
+        if ($tabla === 'categories' || $tabla === 'units' || $tabla === 'brand_models') {
+            $column = $tabla === 'categories' ? 'category_id' : ($tabla === 'units' ? 'unit_id' : 'brand_model_id');
+            if (\App\Models\Equipment::where($column, $id)->exists()) {
+                $inUse = true;
+                $mensajeError = 'No se puede eliminar porque hay Equipos asignados a este registro.';
+            }
+        } elseif ($tabla === 'suppliers') {
+            if (\App\Models\Movement::where('supplier_id', $id)->exists()) {
+                $inUse = true;
+                $mensajeError = 'No se puede eliminar porque hay Movimientos registrados con este proveedor.';
+            }
+        } elseif ($tabla === 'stores') {
+            if (
+                \App\Models\Inventory::where('store_id', $id)->exists() ||
+                \App\Models\Movement::where('origin_id', $id)->exists() ||
+                \App\Models\Movement::where('destination_id', $id)->exists()
+            ) {
+                $inUse = true;
+                $mensajeError = 'No se puede eliminar porque hay Inventario o Movimientos asociados a este almacén.';
+            }
+        }
+
+        if ($inUse) {
+            return back()->withErrors(['error_general' => $mensajeError])->withInput();
+        }
+        // --- FIN DE LA VALIDACIÓN ---
+
         $item->delete();
 
         // Log de eliminación
