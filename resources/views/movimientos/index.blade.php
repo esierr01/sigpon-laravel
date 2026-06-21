@@ -133,9 +133,11 @@
 
                                 <li class="list-group-item"><strong>Equipo:</strong> ${data.equipment?.name ?? 'N/A'}</li>
                                 
-                                <li class="list-group-item"><strong>Proveedor:</strong> ${data.supplier?.name ?? 'N/A'}</li>
-                                <li class="list-group-item"><strong>Origen:</strong> ${data.origin?.name ?? 'N/A'}</li>
-                                <li class="list-group-item"><strong>Destino:</strong> ${data.destination?.name ?? 'N/A'}</li>
+                                ${data.supplier?.name != null ? `<li class="list-group-item"><strong>Proveedor:</strong> ${data.supplier?.name ?? 'N/A'}</li>` : ''}
+                                
+                                ${data.origin?.name != null ? `<li class="list-group-item"><strong>Origen:</strong> ${data.origin?.name ?? 'N/A'}</li>` : ''}
+                                
+                                ${data.destination?.name != null ? `<li class="list-group-item"><strong>Destino:</strong> ${data.destination?.name ?? 'N/A'}</li>` : ''}
                                 
                                 <li class="list-group-item"><strong>Cantidad:</strong> ${data.amount}</li>
                                 <li class="list-group-item"><strong>Observación:</strong> ${data.obs ?? 'Sin obs'}</li>

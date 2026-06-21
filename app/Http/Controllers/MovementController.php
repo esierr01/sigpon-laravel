@@ -16,7 +16,7 @@ class MovementController extends Controller
     {
         $movements = Movement::with(['equipment', 'supplier', 'origin', 'destination', 'user'])
             ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->paginate(5);
 
         return view('movimientos.index', compact('movements'));
     }
@@ -172,11 +172,40 @@ class MovementController extends Controller
                     'user_id' => $userId,
                 ]);
 
+                // --- CONSTRUIR MENSAJE DE LOG DETALLADO ---
+                $equipmentName = Equipment::find($equipmentId)->name ?? 'Desconocido';
+                $amount = $validated['amount'];
+                $obsLog = '';
+
+                switch ($validated['movement_type']) {
+                    case 1: // Compra
+                        $supplierName = \App\Models\Supplier::find($validated['supplier_id'] ?? null)->name ?? 'N/A';
+                        $destStoreName = \App\Models\Store::find($validated['destination_id'] ?? null)->name ?? 'N/A';
+                        $obsLog = "Compra de inventario (+{$amount}) de equipo \"{$equipmentName}\" del Proveedor {$supplierName} hacia el Almacen {$destStoreName}";
+                        break;
+                    case 2: // Salida
+                        $originStoreName = \App\Models\Store::find($validated['origin_id'] ?? null)->name ?? 'N/A';
+                        $obsLog = "Salida de inventario (-{$amount}) de equipo \"{$equipmentName}\" del Almacen {$originStoreName}";
+                        break;
+                    case 3: // Traslado
+                        $originStoreName = \App\Models\Store::find($validated['origin_id'] ?? null)->name ?? 'N/A';
+                        $destStoreName = \App\Models\Store::find($validated['destination_id'] ?? null)->name ?? 'N/A';
+                        $obsLog = "Traslado de {$amount} unidades de equipo \"{$equipmentName}\" del Almacen {$originStoreName} hacia el Almacen {$destStoreName}";
+                        break;
+                    case 4: // Ajuste
+                        $originStoreName = \App\Models\Store::find($validated['origin_id'] ?? null)->name ?? 'N/A';
+                        $signo = $amount > 0 ? '+' : '';
+                        $obsLog = "Ajuste de inventario ({$signo}{$amount}) de equipo \"{$equipmentName}\" en Almacen {$originStoreName}";
+                        break;
+                    default:
+                        $obsLog = "Movimiento de {$amount} unidades a equipo \"{$equipmentName}\"";
+                }
+
                 // Log de cambio
                 LogChange::create([
                     'user_id' => $userId,
-                    'table' => 'movements',
-                    'obs' => 'Nuevo movimiento tipo ' . $validated['movement_type'] . ' - Equipo ID: ' . $equipmentId,
+                    'table' => 'Movimientos',
+                    'obs' => $obsLog,
                     'ip' => $request->ip(),
                     'created_at' => now(),
                 ]);

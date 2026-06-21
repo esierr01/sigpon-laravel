@@ -10,6 +10,7 @@ use App\Http\Controllers\TablaController; // <-- Agregar el controlador
 use App\Http\Controllers\GeneralController; // <-- Agregar el controlador
 use App\Http\Controllers\InventoryController; // <-- Agregar el controlador
 use App\Http\Controllers\MovementController; // <-- Agregar el controlador
+use App\Http\Controllers\EquipmentController; // <-- Agregar el controlador
 
 Route::get('/', function () {
     return view('auth.login');
@@ -39,6 +40,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/tablas/{tabla}', [TablaController::class, 'store'])->name('tablas.store');
     Route::put('/tablas/{tabla}/{id}', [TablaController::class, 'update'])->name('tablas.update');
     Route::delete('/tablas/{tabla}/{id}', [TablaController::class, 'destroy'])->name('tablas.destroy');
+
+    Route::put('/equipments/{equipment}', [EquipmentController::class, 'update'])->name('equipments.update');
 
     // Configuración General
     Route::get('/configuracion', [GeneralController::class, 'edit'])->name('general.edit');

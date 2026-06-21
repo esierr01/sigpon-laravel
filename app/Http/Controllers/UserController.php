@@ -105,7 +105,7 @@ class UserController extends Controller
         // <-- 2. REGISTRAR LOG DE CARGA
         LogChange::create([
             'user_id' => Auth::id(),
-            'table' => 'users',
+            'table' => 'Usuarios',
             'obs' => 'Carga de nuevo usuario: ' . $user->email,
             'ip' => $request->ip(),
             'created_at' => now(),
@@ -187,8 +187,8 @@ class UserController extends Controller
         if (!empty($cambios)) {
             LogChange::create([
                 'user_id' => Auth::id(),
-                'table' => 'users',
-                'obs' => 'Modificación de usuario ' . $user->email . ' | ' . implode(', ', $cambios),
+                'table' => 'Usuarios',
+                'obs' => 'Modificación: ' . $user->email . ' | ' . implode(', ', $cambios),
                 'ip' => $request->ip(),
                 'created_at' => now(),
             ]);
@@ -215,7 +215,7 @@ class UserController extends Controller
         // <-- 5. REGISTRAR LOG DE HABILITAR/INHABILITAR
         LogChange::create([
             'user_id' => Auth::id(),
-            'table' => 'users',
+            'table' => 'Usuarios',
             'obs' => "{$accion} de usuario: {$user->email}",
             'ip' => request()->ip(), // Aquí usamos el helper global de Laravel
             'created_at' => now(),
@@ -264,7 +264,7 @@ class UserController extends Controller
         // Registrar en el log de cambios
         LogChange::create([
             'user_id' => Auth::id(),
-            'table' => 'users',
+            'table' => 'Usuarios',
             'obs' => 'Cambio de contraseña propio',
             'ip' => $request->ip(),
             'created_at' => now(),

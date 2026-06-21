@@ -8,6 +8,12 @@
     background: linear-gradient(to right, #002E5D, #002E5D, #2774ae);
 }
 
+.bg-footer {
+    background: #4298da;
+    background: -webkit-linear-gradient(to right, #0b59a7, #0d549b, #4293d1);
+    background: linear-gradient(to right, #1166bb, #0e60b3, #66a6d6);
+}
+
 /* BOTON DE LOGIN, RETROCEDER */
 .bg-custom-btn-on {
     background-color: #079e41 !important;

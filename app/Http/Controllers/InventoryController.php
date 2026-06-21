@@ -14,11 +14,19 @@ class InventoryController extends Controller
 {
     public function index()
     {
-        $inventories = Inventory::with(['equipment.category', 'equipment.brandModel', 'equipment.unit', 'store'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        // Usamos join para poder ordenar por el nombre del equipo
+        $inventories = Inventory::join('equipment', 'inventory.equipment_id', '=', 'equipment.id')
+            ->orderBy('equipment.name', 'asc')
+            ->select('inventory.*') // Corregido a 'inventory'
+            ->with(['equipment.category', 'equipment.brandModel', 'equipment.unit', 'store'])
+            ->paginate(5);
 
-        // Datos para los modales de movimientos
+        // Obtenemos los inventarios con stock > 0 y los agrupamos por equipment_id
+        $stocks = Inventory::with('store:id,name')
+            ->where('stock', '>', 0)
+            ->get()
+            ->groupBy('equipment_id');
+
         $categories = Category::orderBy('name')->get();
         $brands = BrandModel::orderBy('brand')->get();
         $units = Unit::orderBy('name')->get();
@@ -31,7 +39,8 @@ class InventoryController extends Controller
             'brands',
             'units',
             'stores',
-            'suppliers'
+            'suppliers',
+            'stocks'
         ));
     }
 }

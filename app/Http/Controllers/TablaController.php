@@ -17,6 +17,15 @@ class TablaController extends Controller
         'stores' => \App\Models\Store::class,
     ];
 
+    // Nombres legibles en español para los logs
+    private array $tableNames = [
+        'categories' => 'Categorías',
+        'units' => 'Unidades',
+        'brand_models' => 'Marcas/Modelos',
+        'suppliers' => 'Proveedores',
+        'stores' => 'Almacenes',
+    ];
+
     // Reglas de validación por tabla
     private array $rules = [
         'categories' => ['name' => 'required|string|max:100'],
@@ -26,6 +35,17 @@ class TablaController extends Controller
         'stores' => ['name' => 'required|string|max:100', 'address' => 'required|string|max:255', 'phone' => 'required|string|max:45', 'contact' => 'required|string|max:100'],
     ];
 
+    // Función auxiliar para obtener el nombre del registro según la tabla
+    private function getNombreRegistro(string $tabla, $item): string
+    {
+        if (in_array($tabla, ['categories', 'units', 'suppliers', 'stores'])) {
+            return $item->name ?? 'N/A';
+        } elseif ($tabla === 'brand_models') {
+            return ($item->brand ?? 'N/A') . ' - ' . ($item->model ?? 'N/A');
+        }
+        return 'N/A';
+    }
+
     public function store(Request $request, string $tabla)
     {
         if (!isset($this->models[$tabla])) abort(404);
@@ -34,11 +54,14 @@ class TablaController extends Controller
         $modelClass = $this->models[$tabla];
         $item = $modelClass::create($validated);
 
+        $nombreTabla = $this->tableNames[$tabla] ?? $tabla;
+        $nombreRegistro = $this->getNombreRegistro($tabla, $item);
+
         // Log de carga
         LogChange::create([
             'user_id' => Auth::id(),
-            'table' => $tabla,
-            'obs' => 'Carga de nuevo registro: ' . json_encode($validated),
+            'table' => $nombreTabla,
+            'obs' => 'Carga de nuevo registro: ' . $nombreRegistro,
             'ip' => $request->ip(),
             'created_at' => now(),
         ]);
@@ -62,15 +85,18 @@ class TablaController extends Controller
         foreach ($validated as $campo => $nuevoValor) {
             $valorAntiguo = $originalData[$campo] ?? null;
             if ((string)$valorAntiguo !== (string)$nuevoValor) {
-                $cambios[] = "{$campo}: antes '{$valorAntiguo}' - ahora '{$nuevoValor}'";
+                $cambios[] = "'{$valorAntiguo}' a '{$nuevoValor}'";
             }
         }
 
         if (!empty($cambios)) {
+            $nombreTabla = $this->tableNames[$tabla] ?? $tabla;
+            $nombreRegistro = $this->getNombreRegistro($tabla, $item);
+
             LogChange::create([
                 'user_id' => Auth::id(),
-                'table' => $tabla,
-                'obs' => 'Modificación de registro ID ' . $id . ' | ' . implode(', ', $cambios),
+                'table' => $nombreTabla,
+                'obs' => 'Modificación de ' . implode(', ', $cambios),
                 'ip' => $request->ip(),
                 'created_at' => now(),
             ]);
@@ -117,13 +143,16 @@ class TablaController extends Controller
         }
         // --- FIN DE LA VALIDACIÓN ---
 
+        $nombreTabla = $this->tableNames[$tabla] ?? $tabla;
+        $nombreRegistro = $this->getNombreRegistro($tabla, $item);
+
         $item->delete();
 
-        // Log de eliminación
+        // Log de eliminación con el nombre
         LogChange::create([
             'user_id' => Auth::id(),
-            'table' => $tabla,
-            'obs' => 'Eliminación de registro ID ' . $id,
+            'table' => $nombreTabla,
+            'obs' => 'Eliminación de registro: ' . $nombreRegistro,
             'ip' => $request->ip(),
             'created_at' => now(),
         ]);

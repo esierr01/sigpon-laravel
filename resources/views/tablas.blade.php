@@ -112,6 +112,17 @@
                                             <td>{{ $item->created_at->format('d/m/Y H:i:s') }}</td>
 
                                             <td class="text-center d-flex gap-3 align-items-center justify-content-center">
+
+                                                @if ($activeTab == 'suppliers' || $activeTab == 'stores')
+                                                    <!-- Botón Detalle (Solo Proveedores y Almacenes) -->
+                                                    <button type="button"
+                                                        class="btn bg-custom-btn-on btn-sm btn-ver-detalle"
+                                                        data-item="{{ json_encode($item) }}"
+                                                        data-tabla="{{ $activeTab }}">
+                                                        Detalle
+                                                    </button>
+                                                @endif
+
                                                 <!-- Botón Editar (Abre modal) -->
                                                 <button type="button" class="btn bg-custom-btn-second btn-sm btn-editar"
                                                     data-id="{{ $item->id }}" data-tabla="{{ $activeTab }}"
@@ -156,7 +167,7 @@
                     <div class="modal-body" id="bodyCrear">
                         <!-- Los inputs se inyectarán por JavaScript según la pestaña -->
                     </div>
-                    <div class="modal-footer">
+                    <div class="modal-footer bg-footer">
                         <button type="button" class="btn bg-custom-btn-off btn-sm"
                             data-bs-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn bg-custom-btn-on btn-sm">Guardar Datos</button>
@@ -180,7 +191,7 @@
                     <div class="modal-body" id="bodyEditar">
                         <!-- Los inputs se inyectarán por JavaScript -->
                     </div>
-                    <div class="modal-footer">
+                    <div class="modal-footer bg-footer">
                         <button type="button" class="btn bg-custom-btn-off btn-sm"
                             data-bs-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn bg-custom-btn-on btn-sm">Guardar Cambios</button>
@@ -199,13 +210,31 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body" id="confirmToggleModalBody">¿Estás seguro de realizar esta acción?</div>
-                <div class="modal-footer">
+                <div class="modal-footer bg-footer">
                     <button type="button" class="btn bg-custom-btn-off btn-sm" data-bs-dismiss="modal">No</button>
                     <form id="modalToggleForm" method="POST" action="">
                         @csrf @method('DELETE')
                         <button type="submit" class="btn bg-custom-btn-danger btn-sm" id="modalConfirmBtn">Sí,
                             Eliminar</button>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Detalle Registro (Proveedores/Almacenes) -->
+    <div class="modal fade" id="modalDetalle" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-custom-gradient text-white">
+                    <h5 class="modal-title">Detalle del Registro</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="bodyDetalle">
+                    <!-- Contenido inyectado por JS -->
+                </div>
+                <div class="modal-footer bg-footer">
+                    <button type="button" class="btn bg-custom-btn-off btn-sm" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
@@ -272,6 +301,56 @@
                 formCrear.action = '{{ route('tablas.store', ['tabla' => $activeTab]) }}';
                 bodyCrear.innerHTML = getFormFields(activeTab);
                 modalCrear.show();
+            });
+
+            // --- LÓGICA PARA MODAL DETALLE ---
+            const modalDetalle = new bootstrap.Modal(document.getElementById('modalDetalle'));
+            const bodyDetalle = document.getElementById('bodyDetalle');
+
+            document.querySelectorAll('.btn-ver-detalle').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const item = JSON.parse(this.dataset.item);
+                    const tabla = this.dataset.tabla;
+
+                    let html = '<ul class="list-group list-group-flush">';
+
+                    if (tabla === 'suppliers') {
+                        html +=
+                            `<li class="list-group-item"><strong>Nombre / Razón Social:</strong> ${item.name}</li>`;
+                        html +=
+                        `<li class="list-group-item"><strong>RIF:</strong> ${item.rif}</li>`;
+                        html +=
+                            `<li class="list-group-item"><strong>Dirección:</strong> ${item.address}</li>`;
+                        html +=
+                            `<li class="list-group-item"><strong>Teléfono:</strong> ${item.phone}</li>`;
+                        html +=
+                            `<li class="list-group-item"><strong>Persona de Contacto:</strong> ${item.contact}</li>`;
+                    } else if (tabla === 'stores') {
+                        html +=
+                            `<li class="list-group-item"><strong>Nombre del Almacén:</strong> ${item.name}</li>`;
+                        html +=
+                            `<li class="list-group-item"><strong>Dirección:</strong> ${item.address}</li>`;
+                        html +=
+                            `<li class="list-group-item"><strong>Teléfono:</strong> ${item.phone}</li>`;
+                        html +=
+                            `<li class="list-group-item"><strong>Persona de Contacto:</strong> ${item.contact}</li>`;
+                    }
+
+                    // Formatear fecha
+                    const fecha = new Date(item.created_at).toLocaleString('es-ES', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    html +=
+                        `<li class="list-group-item"><strong>Fecha de Creación:</strong> ${fecha}</li>`;
+
+                    html += '</ul>';
+                    bodyDetalle.innerHTML = html;
+                    modalDetalle.show();
+                });
             });
 
             // --- LÓGICA PARA MODAL EDITAR ---
