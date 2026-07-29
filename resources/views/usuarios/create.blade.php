@@ -10,7 +10,7 @@
                     </div>
 
                     <div class="card-body">
-                        <form action="{{ route('usuarios.store') }}" method="POST">
+                        <form action="{{ route('usuarios.store') }}" method="POST"> 
                             @csrf
 
                             <!-- Nombre -->
@@ -39,9 +39,13 @@
                                     <label for="role" class="form-label fw-bold">Rol del Sistema</label>
                                     <select class="form-select @error('role') is-invalid @enderror" id="role"
                                         name="role" required>
-                                        <option value="1" {{ old('role') == 1 ? 'selected' : '' }}>Admin</option>
+                                        {{-- Mostrar opción Admin SOLO si $showAdminOption es true --}}
+                                        @if($showAdminOption ?? true)
+                                            <option value="1" {{ old('role') == 1 ? 'selected' : '' }}>Admin</option>
+                                        @endif
                                         <option value="2" {{ old('role') == 2 ? 'selected' : '' }}>Editor</option>
                                         <option value="3" {{ old('role') == 3 ? 'selected' : '' }}>Visitante</option>
+                                        <option value="4" {{ old('role') == 4 ? 'selected' : '' }}>Auditor</option>
                                     </select>
                                     @error('role')
                                         <div class="invalid-feedback">{{ $message }}</div>

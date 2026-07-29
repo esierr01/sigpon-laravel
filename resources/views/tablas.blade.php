@@ -57,13 +57,18 @@
                                     href="{{ route('tablas.index', ['tab' => 'stores']) }}">Almacenes</a></li>
                         </ul>
 
-                        <!-- Botón Agregar según pestaña -->
-                        <div class="d-flex justify-content-end mb-2">
-                            <button type="button" class="btn bg-custom-btn-first btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#modalCrear">
-                                <i class="bi bi-plus-circle me-2"></i> Nuevo Registro
-                            </button>
-                        </div>
+                        <!-- Botón Agregar según pestaña (solo Admin) -->
+                        @if (Auth::user()->role == 1)
+                            <div class="d-flex justify-content-end mb-2">
+                                <button type="button" class="btn bg-custom-btn-first btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#modalCrear">
+                                    <i class="bi bi-plus-circle me-2"></i> Nuevo Registro
+                                </button>
+                            </div>
+                        @else
+                            <div class="d-flex justify-content-end mb-2">
+                            </div>
+                        @endif
 
                         <!-- Contenido de la tabla dinámica -->
                         <div class="table-responsive">
@@ -86,7 +91,9 @@
                                             <th>{{ $col }}</th>
                                         @endforeach
                                         <th>Fecha Creación</th>
-                                        <th class="text-center">Acciones</th>
+                                        @if (Auth::user()->role == 1)
+                                            <th class="text-center">Acciones</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -111,33 +118,35 @@
 
                                             <td>{{ $item->created_at->format('d/m/Y H:i:s') }}</td>
 
-                                            <td class="text-center d-flex gap-3 align-items-center justify-content-center">
+                                            @if (Auth::user()->role == 1)
+                                                <td class="text-center d-flex gap-3 align-items-center justify-content-center">
 
-                                                @if ($activeTab == 'suppliers' || $activeTab == 'stores')
-                                                    <!-- Botón Detalle (Solo Proveedores y Almacenes) -->
-                                                    <button type="button"
-                                                        class="btn bg-custom-btn-on btn-sm btn-ver-detalle"
-                                                        data-item="{{ json_encode($item) }}"
-                                                        data-tabla="{{ $activeTab }}">
-                                                        Detalle
+                                                    @if ($activeTab == 'suppliers' || $activeTab == 'stores')
+                                                        <!-- Botón Detalle (Solo Proveedores y Almacenes) -->
+                                                        <button type="button"
+                                                            class="btn bg-custom-btn-on btn-sm btn-ver-detalle"
+                                                            data-item="{{ json_encode($item) }}"
+                                                            data-tabla="{{ $activeTab }}">
+                                                            Detalle
+                                                        </button>
+                                                    @endif
+
+                                                    <!-- Botón Editar (Abre modal) -->
+                                                    <button type="button" class="btn bg-custom-btn-second btn-sm btn-editar"
+                                                        data-id="{{ $item->id }}" data-tabla="{{ $activeTab }}"
+                                                        data-item="{{ json_encode($item) }}">
+                                                        Editar
                                                     </button>
-                                                @endif
 
-                                                <!-- Botón Editar (Abre modal) -->
-                                                <button type="button" class="btn bg-custom-btn-second btn-sm btn-editar"
-                                                    data-id="{{ $item->id }}" data-tabla="{{ $activeTab }}"
-                                                    data-item="{{ json_encode($item) }}">
-                                                    Editar
-                                                </button>
-
-                                                <!-- Botón Eliminar (Usa el modal existente) -->
-                                                <button type="button"
-                                                    class="btn bg-custom-btn-danger btn-sm btn-toggle-status"
-                                                    data-url="{{ route('tablas.destroy', ['tabla' => $activeTab, 'id' => $item->id]) }}"
-                                                    data-action="eliminar">
-                                                    Eliminar
-                                                </button>
+                                                    <!-- Botón Eliminar (Usa el modal existente) -->
+                                                    <button type="button"
+                                                        class="btn bg-custom-btn-danger btn-sm btn-toggle-status"
+                                                        data-url="{{ route('tablas.destroy', ['tabla' => $activeTab, 'id' => $item->id]) }}"
+                                                        data-action="eliminar">
+                                                        Eliminar
+                                                    </button>
                                             </td>
+                                            @endif
                                         </tr>
                                     @empty
                                         <tr>

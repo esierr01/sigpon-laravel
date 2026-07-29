@@ -90,9 +90,11 @@
 
                             <div class="d-flex justify-content-end mt-2 gap-2">
                                 <!-- Botón Editar (Visible inicialmente) -->
-                                <button type="button" class="btn bg-custom-btn-second btn-sm" id="btn-editar">
-                                    <i class="bi bi-pencil-square me-2"></i>Editar Configuración
-                                </button>
+                                @if (Auth::user()->role == 1)
+                                    <button type="button" class="btn bg-custom-btn-second btn-sm" id="btn-editar">
+                                        <i class="bi bi-pencil-square me-2"></i>Editar Configuración
+                                    </button>
+                                @endif
 
                                 <!-- Botones Guardar y Cancelar (Ocultos inicialmente) -->
                                 <button type="button" class="btn bg-custom-btn-off btn-sm d-none" id="btn-cancelar">

@@ -92,8 +92,6 @@
             color: var(--bs-light) !important;
         }
 
-        /* From Uiverse.io by absent452 */
-        /* From Uiverse.io by vinodjangid07 */
         .button {
             width: 50px;
             height: 35px;

@@ -6,19 +6,47 @@ use App\Models\Equipment;
 use App\Models\Inventory;
 use App\Models\Movement;
 use App\Models\LogChange;
+use App\Models\MovementType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class MovementController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $movements = Movement::with(['equipment', 'supplier', 'origin', 'destination', 'user'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(5);
+        // Query base con relaciones
+        $query = Movement::with(['equipment', 'supplier', 'origin', 'destination', 'user']);
 
-        return view('movimientos.index', compact('movements'));
+        // 🔍 Filtro de búsqueda insensible a mayúsculas/minúsculas
+        if ($request->filled('search')) {
+            $search = strtolower(trim($request->search));
+
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('equipment', function ($sub) use ($search) {
+                    $sub->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"]);
+                })
+                    ->orWhere('movement_type', 'LIKE', "%{$search}%")
+                    ->orWhere('amount', 'LIKE', "%{$search}%")
+                    ->orWhereRaw('LOWER(obs) LIKE ?', ["%{$search}%"])
+                    ->orWhereHas('supplier', function ($sub) use ($search) {
+                        $sub->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"]);
+                    })
+                    ->orWhereHas('origin', function ($sub) use ($search) {
+                        $sub->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"]);
+                    })
+                    ->orWhereHas('destination', function ($sub) use ($search) {
+                        $sub->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"]);
+                    });
+            });
+        }
+
+        $movements = $query->orderBy('created_at', 'desc')->paginate(5);
+
+        // ← AGREGAR: Cargar tipos de movimiento activos para el lookup en la vista
+        $movementTypes = \App\Models\MovementType::pluck('name', 'id');
+
+        return view('movimientos.index', compact('movements', 'movementTypes')); // ← Pasar $movementTypes
     }
 
     public function store(Request $request)
@@ -181,21 +209,21 @@ class MovementController extends Controller
                     case 1: // Compra
                         $supplierName = \App\Models\Supplier::find($validated['supplier_id'] ?? null)->name ?? 'N/A';
                         $destStoreName = \App\Models\Store::find($validated['destination_id'] ?? null)->name ?? 'N/A';
-                        $obsLog = "Compra de inventario (+{$amount}) de equipo \"{$equipmentName}\" del Proveedor {$supplierName} hacia el Almacen {$destStoreName}";
+                        $obsLog = "Compra de inventario (+{$amount}) de equipo \"{$equipmentName}\" del Proveedor {$supplierName} hacia el Almacén {$destStoreName}";
                         break;
                     case 2: // Salida
                         $originStoreName = \App\Models\Store::find($validated['origin_id'] ?? null)->name ?? 'N/A';
-                        $obsLog = "Salida de inventario (-{$amount}) de equipo \"{$equipmentName}\" del Almacen {$originStoreName}";
+                        $obsLog = "Salida de inventario (-{$amount}) de equipo \"{$equipmentName}\" del Almacén {$originStoreName}";
                         break;
                     case 3: // Traslado
                         $originStoreName = \App\Models\Store::find($validated['origin_id'] ?? null)->name ?? 'N/A';
                         $destStoreName = \App\Models\Store::find($validated['destination_id'] ?? null)->name ?? 'N/A';
-                        $obsLog = "Traslado de {$amount} unidades de equipo \"{$equipmentName}\" del Almacen {$originStoreName} hacia el Almacen {$destStoreName}";
+                        $obsLog = "Traslado de {$amount} unidades de equipo \"{$equipmentName}\" del Almacén {$originStoreName} hacia el Almacén {$destStoreName}";
                         break;
                     case 4: // Ajuste
                         $originStoreName = \App\Models\Store::find($validated['origin_id'] ?? null)->name ?? 'N/A';
                         $signo = $amount > 0 ? '+' : '';
-                        $obsLog = "Ajuste de inventario ({$signo}{$amount}) de equipo \"{$equipmentName}\" en Almacen {$originStoreName}";
+                        $obsLog = "Ajuste de inventario ({$signo}{$amount}) de equipo \"{$equipmentName}\" en Almacén {$originStoreName}";
                         break;
                     default:
                         $obsLog = "Movimiento de {$amount} unidades a equipo \"{$equipmentName}\"";

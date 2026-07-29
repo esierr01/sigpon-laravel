@@ -12,21 +12,43 @@ use Illuminate\Http\Request;
 
 class InventoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Usamos join para poder ordenar por el nombre del equipo
-        $inventories = Inventory::join('equipment', 'inventory.equipment_id', '=', 'equipment.id')
-            ->orderBy('equipment.name', 'asc')
-            ->select('inventory.*') // Corregido a 'inventory'
+        // Query base con joins para ordenamiento y relaciones
+        $query = Inventory::join('equipment', 'inventory.equipment_id', '=', 'equipment.id')
+            ->leftJoin('categories', 'equipment.category_id', '=', 'categories.id')
+            ->leftJoin('units', 'equipment.unit_id', '=', 'units.id')
+            ->select('inventory.*');
+
+        // 🔍 Filtro de búsqueda (insensible a mayúsculas/minúsculas)
+        if ($request->filled('search')) {
+            $search = strtolower($request->search);
+            $query->where(function ($q) use ($search) {
+                // Buscar en nombre del equipo
+                $q->whereRaw('LOWER(equipment.name) LIKE ?', ["%{$search}%"])
+                    // O en categoría
+                    ->orWhereRaw('LOWER(categories.name) LIKE ?', ["%{$search}%"])
+                    // O en unidad
+                    ->orWhereRaw('LOWER(units.name) LIKE ?', ["%{$search}%"])
+                    // O en almacén
+                    ->orWhereHas('store', function ($sub) use ($search) {
+                        $sub->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"]);
+                    });
+            });
+        }
+
+        // Paginación manteniendo orden por nombre de equipo
+        $inventories = $query->orderBy('equipment.name', 'asc')
             ->with(['equipment.category', 'equipment.brandModel', 'equipment.unit', 'store'])
             ->paginate(5);
 
-        // Obtenemos los inventarios con stock > 0 y los agrupamos por equipment_id
+        // Stocks agrupados por equipment_id (solo con stock > 0)
         $stocks = Inventory::with('store:id,name')
             ->where('stock', '>', 0)
             ->get()
             ->groupBy('equipment_id');
 
+        // Datos para modales
         $categories = Category::orderBy('name')->get();
         $brands = BrandModel::orderBy('brand')->get();
         $units = Unit::orderBy('name')->get();

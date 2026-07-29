@@ -39,12 +39,14 @@
                                             <span class="badge bg-primary">Admin</span>
                                         @elseif ($user->role == 2)
                                             <span class="badge bg-warning text-dark">Editor</span>
-                                        @else
+                                        @elseif ($user->role == 3)
                                             <span class="badge bg-secondary">Visitante</span>
+                                        @else
+                                            <span class="badge bg-secondary">Auditor</span>
                                         @endif
                                     </td>
                                 </tr>
-                                <tr>
+                                {{-- <tr>
                                     <th class="text-muted">Correo Verificado:</th>
                                     <td>
                                         @if ($user->email_verified_at)
@@ -54,7 +56,7 @@
                                             <span class="badge bg-secondary">No verificado</span>
                                         @endif
                                     </td>
-                                </tr>
+                                </tr> --}}
                                 <tr>
                                     <th class="text-muted">Último Inicio de Sesión:</th>
                                     <td>{{ $user->last_login ? $user->last_login->format('d/m/Y H:i:s') : 'Nunca' }}</td>

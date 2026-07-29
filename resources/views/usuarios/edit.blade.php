@@ -42,12 +42,16 @@
                                     <label for="role" class="form-label fw-bold">Rol del Sistema</label>
                                     <select class="form-select @error('role') is-invalid @enderror" id="role"
                                         name="role" required>
-                                        <option value="1" {{ old('role', $user->role) == 1 ? 'selected' : '' }}>Admin
-                                        </option>
+                                        {{-- Mostrar opción Admin SOLO si $canBeAdmin es true --}}
+                                        @if($canBeAdmin ?? true)
+                                            <option value="1" {{ old('role', $user->role) == 1 ? 'selected' : '' }}>Admin</option>
+                                        @endif
                                         <option value="2" {{ old('role', $user->role) == 2 ? 'selected' : '' }}>Editor
                                         </option>
                                         <option value="3" {{ old('role', $user->role) == 3 ? 'selected' : '' }}>
                                             Visitante</option>
+                                        <option value="4" {{ old('role', $user->role) == 4 ? 'selected' : '' }}>
+                                            Auditor</option>
                                     </select>
                                     @error('role')
                                         <div class="invalid-feedback">{{ $message }}</div>

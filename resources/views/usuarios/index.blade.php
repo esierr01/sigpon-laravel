@@ -9,9 +9,11 @@
                     <a href="{{ route('home') }}" class="btn bg-custom-btn-on btn-sm"><i class="bi bi-box-arrow-left me-2"></i>
                         Regresar</a>
 
-                    <a class="btn bg-custom-btn-on btn-sm" href="{{ route('usuarios.create') }}">
-                        <i class="bi bi-person-plus-fill me-2"></i> Nuevo Usuario
-                    </a>
+                    @if (Auth::user()->role == 1)
+                        <a class="btn bg-custom-btn-on btn-sm" href="{{ route('usuarios.create') }}">
+                            <i class="bi bi-person-plus-fill me-2"></i> Nuevo Usuario
+                        </a>
+                    @endif
                 </div>
 
                 <div class="card shadow">
@@ -57,13 +59,19 @@
                                             <td style="width: 280px">{{ $user->name }}</td>
                                             <td>{{ $user->email }}</td>
                                             <td>
-                                                @if ($user->role == 1)
-                                                    <span class="text-primary fs-6 fw-bold">Admin</span>
-                                                @elseif ($user->role == 2)
-                                                    <span class="text-dark fs-6 fw-bold">Editor</span>
-                                                @else
-                                                    <span class="text-info fs-6 fw-bold">Visitante</span>
-                                                @endif
+                                                @php
+                                                    $rolId = $user->role;
+                                                    $rolNombre = $roles[$rolId] ?? 'Desconocido';
+                                                    $rolClass = match($rolId) {
+                                                        1 => 'text-primary',
+                                                        2 => 'text-dark',
+                                                        3 => 'text-info',
+                                                        default => 'text-secondary'
+                                                    };
+                                                @endphp
+                                                <span class="{{ $rolClass }} fs-6 fw-bold">
+                                                    {{ $rolNombre }}
+                                                </span>
                                             </td>
                                             <td>
                                                 @if ($user->active)
@@ -78,25 +86,29 @@
                                                 <a href="{{ route('usuarios.show', $user->id) }}"
                                                     class="btn bg-custom-btn-first btn-sm">Detalle</a>
 
-                                                <a href="{{ route('usuarios.edit', $user->id) }}"
-                                                    class="btn bg-custom-btn-second btn-sm">Editar</a>
+                                                @if (Auth::user()->role == 1)
 
-                                                @if (Auth::id() !== $user->id)
-                                                    @if ($user->active)
-                                                        <button type="button"
-                                                            class="btn bg-custom-btn-danger btn-sm btn-toggle-status"
-                                                            data-url="{{ route('usuarios.destroy', $user->id) }}"
-                                                            data-action="inhabilitar">
-                                                            Inhabilitar
-                                                        </button>
-                                                    @else
-                                                        <button type="button"
-                                                            class="btn bg-custom-btn-terciary btn-sm btn-toggle-status"
-                                                            data-url="{{ route('usuarios.destroy', $user->id) }}"
-                                                            data-action="habilitar">
-                                                            Habilitar
-                                                        </button>
+                                                    <a href="{{ route('usuarios.edit', $user->id) }}"
+                                                        class="btn bg-custom-btn-second btn-sm">Editar</a>
+
+                                                    @if (Auth::id() !== $user->id)
+                                                        @if ($user->active)
+                                                            <button type="button"
+                                                                class="btn bg-custom-btn-danger btn-sm btn-toggle-status"
+                                                                data-url="{{ route('usuarios.destroy', $user->id) }}"
+                                                                data-action="inhabilitar">
+                                                                Inhabilitar
+                                                            </button>
+                                                        @else
+                                                            <button type="button"
+                                                                class="btn bg-custom-btn-terciary btn-sm btn-toggle-status"
+                                                                data-url="{{ route('usuarios.destroy', $user->id) }}"
+                                                                data-action="habilitar">
+                                                                Habilitar
+                                                            </button>
+                                                        @endif
                                                     @endif
+                                                    
                                                 @endif
 
                                             </td>

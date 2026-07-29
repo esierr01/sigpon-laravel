@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\LogChange; // <-- 1. IMPORTAR EL MODELO
+use App\Models\LogChange;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -27,9 +28,9 @@ class UserController extends Controller
         // Aplicar filtro de búsqueda general si se ingresó algo
         if ($request->filled('search')) {
             $search = $request->input('search');
-            $searchLower = strtolower($search); // Convertimos a minúsculas
+            $searchLower = strtolower($search);
 
-            // Mapeo de palabras clave a valores de la base de datos (stripos ya es insensible a mayúsculas)
+            // Mapeo de palabras clave a valores de la base de datos
             $roleSearch = null;
             if (stripos($search, 'admin') !== false) $roleSearch = 1;
             elseif (stripos($search, 'editor') !== false) $roleSearch = 2;
@@ -41,17 +42,13 @@ class UserController extends Controller
 
             // Agrupar las condiciones con OR
             $query->where(function ($q) use ($searchLower, $roleSearch, $statusSearch) {
-
-                // Usamos whereRaw con LOWER() para ignorar mayúsculas/minúsculas en la BD
                 $q->whereRaw('LOWER(name) LIKE ?', ["%{$searchLower}%"])
                     ->orWhereRaw('LOWER(email) LIKE ?', ["%{$searchLower}%"]);
 
-                // Si la palabra escrita coincide con un rol, lo agrega a la búsqueda
                 if ($roleSearch !== null) {
                     $q->orWhere('role', $roleSearch);
                 }
 
-                // Si la palabra escrita coincide con un estado, lo agrega a la búsqueda
                 if ($statusSearch !== null) {
                     $q->orWhere('active', $statusSearch);
                 }
@@ -64,13 +61,22 @@ class UserController extends Controller
             ->paginate(5)
             ->appends($request->query());
 
-        return view('usuarios.index', compact('users'));
+        // ← AGREGAR: Cargar roles activos para el lookup en la vista
+        $roles = \App\Models\Role::pluck('name', 'id');
+
+        return view('usuarios.index', compact('users', 'roles')); // ← Pasar $roles
     }
 
 
     public function create()
     {
-        return view('usuarios.create');
+        // Contar cuántos administradores activos existen
+        $adminCount = \App\Models\User::where('role', 1)->where('active', true)->count();
+
+        // Pasar variable a la vista: si hay >= 2 admins, no mostrar opción de admin
+        $showAdminOption = $adminCount < 2;
+
+        return view('usuarios.create', compact('showAdminOption'));
     }
 
     /**
@@ -122,7 +128,17 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        return view('usuarios.edit', compact('user'));
+        // Contar admins activos EXCLUYENDO al usuario que se está editando (si ya es admin)
+        $adminCount = \App\Models\User::where('role', 1)
+            ->where('active', true)
+            ->where('id', '!=', $user->id)  // ← Excluir al usuario actual del conteo
+            ->count();
+
+        // Determinar si se debe mostrar la opción "Admin"
+        // Se muestra SI: el usuario YA es admin O hay menos de 2 admins activos
+        $canBeAdmin = $user->role == 1 || $adminCount < 2;
+
+        return view('usuarios.edit', compact('user', 'canBeAdmin'));
     }
 
     /**

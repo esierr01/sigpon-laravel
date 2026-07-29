@@ -8,14 +8,41 @@
                     <a href="{{ route('home') }}" class="btn bg-custom-btn-on btn-sm"><i
                             class="bi bi-box-arrow-left me-2"></i>Regresar</a>
 
-                    <a href="{{ route('movements.index', ['from' => 'inventario']) }}"
-                        class="btn bg-custom-btn-second btn-sm"><i class="bi bi-clock-history me-2"></i>Historial
-                        Movimientos</a>
+                    @if (Auth::user()->role == 1 || Auth::user()->role == 2 || Auth::user()->role == 4)
+                        <a href="{{ route('movements.index', ['from' => 'inventario']) }}"
+                            class="btn bg-custom-btn-second btn-sm"><i class="bi bi-clock-history me-2"></i>Historial
+                            Movimientos</a>
+                    @endif
                 </div>
 
                 <div class="card shadow">
-                    <div class="card-header bg-custom-gradient text-white">
+                    {{-- <div class="card-header bg-custom-gradient text-white">
                         <h5 class="mb-0">Inventario Actual del Sistema</h5>
+                    </div> --}}
+
+                    <div class="card-header bg-custom-gradient text-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Inventario Actual del Sistema</h5>
+
+                            <!-- Formulario de búsqueda -->
+                            <form action="{{ route('inventory.index') }}" method="GET"
+                                class="d-flex gap-2 align-items-center">
+                                <div class="input-group input-group-sm" style="width: 350px;">
+                                    <input type="text" name="search" class="form-control"
+                                        placeholder="Equipo, categoría, unidad o almacén..." value="{{ request('search') }}"
+                                        aria-label="Buscar inventario">
+                                    <button type="submit" class="btn btn-light" title="Buscar">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                </div>
+                                @if (request('search'))
+                                    <a href="{{ route('inventory.index') }}" class="btn btn-sm btn-outline-light"
+                                        title="Limpiar filtros">
+                                        <i class="bi bi-x-circle"></i>
+                                    </a>
+                                @endif
+                            </form>
+                        </div>
                     </div>
 
                     <div class="card-body">
@@ -45,11 +72,13 @@
                                 title="Refrescar datos del inventario">
                                 <i class="bi bi-arrow-clockwise me-1"></i> Refrescar
                             </a>
-                            <!-- Botón Nuevo Movimiento -->
-                            <button type="button" class="btn bg-custom-btn-on btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#modalTipoMovimiento">
-                                <i class="bi bi-plus-circle me-2"></i> Nuevo Movimiento
-                            </button>
+                            <!-- Botón Nuevo Movimiento, solo lo ven admin y editor -->
+                            @if (Auth::user()->role == 1 || Auth::user()->role == 2)
+                                <button type="button" class="btn bg-custom-btn-on btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#modalTipoMovimiento">
+                                    <i class="bi bi-plus-circle me-2"></i> Nuevo Movimiento
+                                </button>
+                            @endif
                         </div>
 
                         <div class="table-responsive">
@@ -167,8 +196,13 @@
                 <div class="modal-body" id="bodyDetalleEquipo">
                 </div>
                 <div class="modal-footer d-flex justify-content-center align-items-center gap-2 bg-footer">
-                    <button type="button" class="btn bg-custom-btn-second btn-sm" id="btnAbrirEditarEquipo">Editar
-                        Equipamiento</button>
+                    @if (Auth::user()->role == 1 || Auth::user()->role == 2)
+                        <button type="button" class="btn bg-custom-btn-second btn-sm" id="btnAbrirEditarEquipo">Editar
+                            Equipamiento</button>
+                    @else
+                        <button type="button" hidden class="btn bg-custom-btn-off btn-sm" id="btnAbrirEditarEquipo">Editar
+                            Equipamiento</button>
+                    @endif
                     <button type="button" class="btn bg-custom-btn-off btn-sm" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>

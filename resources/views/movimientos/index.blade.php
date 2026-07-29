@@ -15,7 +15,28 @@
 
                 <div class="card shadow">
                     <div class="card-header bg-custom-gradient text-white">
-                        <h5 class="mb-0">Historial de Movimientos</h5>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Historial de Movimientos</h5>
+
+                            <!-- Formulario de búsqueda -->
+                            <form action="{{ route('movements.index') }}" method="GET"
+                                class="d-flex gap-2 align-items-center">
+                                <div class="input-group input-group-sm" style="width: 350px;">
+                                    <input type="text" name="search" class="form-control"
+                                        placeholder="Equipo, tipo, proveedor, almacén..." value="{{ request('search') }}"
+                                        aria-label="Buscar movimientos">
+                                    <button type="submit" class="btn btn-light" title="Buscar">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                </div>
+                                @if (request('search'))
+                                    <a href="{{ route('movements.index') }}" class="btn btn-sm btn-outline-light"
+                                        title="Limpiar filtros">
+                                        <i class="bi bi-x-circle"></i>
+                                    </a>
+                                @endif
+                            </form>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -37,15 +58,20 @@
                                         <tr>
                                             <td style="width: 110px;">{{ $mov->created_at->format('d/m/Y') }}</td>
                                             <td style="width: 90px;">
-                                                @if ($mov->movement_type == 1)
-                                                    <span class="badge bg-success">Compra</span>
-                                                @elseif($mov->movement_type == 2)
-                                                    <span class="badge bg-danger">Salida</span>
-                                                @elseif($mov->movement_type == 3)
-                                                    <span class="badge bg-warning text-dark">Traslado</span>
-                                                @else
-                                                    <span class="badge bg-secondary">Ajuste</span>
-                                                @endif
+                                                @php
+                                                    $tipoId = $mov->movement_type;
+                                                    $tipoNombre = $movementTypes[$tipoId] ?? 'Desconocido';
+                                                    $badgeClass = match ($tipoId) {
+                                                        1 => 'bg-success',
+                                                        2 => 'bg-danger',
+                                                        3 => 'bg-warning text-dark',
+                                                        4 => 'bg-secondary',
+                                                        default => 'bg-secondary',
+                                                    };
+                                                @endphp
+                                                <span class="badge {{ $badgeClass }}">
+                                                    {{ $tipoNombre }}
+                                                </span>
                                             </td>
                                             <td style="width: 300px;">{{ $mov->equipment->name ?? 'N/A' }}</td>
                                             <td style="width: 80px; text-align: center;" class="fw-bold">
@@ -125,10 +151,16 @@
 
                                 <li class="list-group-item">
                                     <strong>Tipo:</strong>
-                                    ${data.movement_type == 1 ? '<span class="badge bg-success">Compra</span>' :
-                                    data.movement_type == 2 ? '<span class="badge bg-danger">Salida</span>' :
-                                    data.movement_type == 3 ? '<span class="badge bg-warning text-dark">Traslado</span>' :
-                                   '<span class="badge bg-secondary">Ajuste</span>'}
+                                    ${(() => {
+                                        const tipos = {
+                                            1: { name: 'Compra', class: 'bg-success' },
+                                            2: { name: 'Salida', class: 'bg-danger' },
+                                            3: { name: 'Traslado', class: 'bg-warning text-dark' },
+                                            4: { name: 'Ajuste', class: 'bg-secondary' }
+                                        };
+                                        const tipo = tipos[data.movement_type] || { name: 'N/A', class: 'bg-secondary' };
+                                        return `<span class="badge ${tipo.class}">${tipo.name}</span>`;
+                                    })()}
                                 </li>
 
                                 <li class="list-group-item"><strong>Equipo:</strong> ${data.equipment?.name ?? 'N/A'}</li>

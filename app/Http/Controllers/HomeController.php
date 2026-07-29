@@ -4,29 +4,24 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Inventory;
+use App\Models\Movement;
+use App\Models\User;
+use App\Models\Store;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     */
     public function __construct()
     {
         $this->middleware('auth');
     }
 
-    /**
-     * Show the application dashboard.
-     */
     public function index()
     {
-        // Obtener el usuario autenticado
         $user = Auth::user();
-
-        // Obtener el rol del usuario (1=admin, 2=editor, 3=visitante)
         $userRole = $user->role;
 
-        // Opcional: obtener el nombre del rol
         $roleName = match ($userRole) {
             1 => 'Administrador',
             2 => 'Editor',
@@ -34,15 +29,35 @@ class HomeController extends Controller
             default => 'Sin rol asignado',
         };
 
-        // Pasar el rol y nombre del rol a la vista
-        return view('home', compact('userRole', 'roleName', 'user'));
+        // Métricas reales
+        $totalEquiposInventario = Inventory::sum('stock');
+        $movimientosMes = Movement::whereMonth('created_at', Carbon::now()->month)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->count();
+        $usuariosActivos = User::where('active', true)->count();
+        $equiposBajoStock = Inventory::join('equipment', 'inventory.equipment_id', '=', 'equipment.id')
+            ->whereColumn('inventory.stock', '<=', 'equipment.umbral')
+            ->count();
+        $totalMovimientos = Movement::count();
+        $almacenesRegistrados = Store::count();
+
+        return view('home', compact(
+            'userRole',
+            'roleName',
+            'user',
+            'totalEquiposInventario',
+            'movimientosMes',
+            'usuariosActivos',
+            'equiposBajoStock',
+            'totalMovimientos',
+            'almacenesRegistrados'
+        ));
     }
 
     public function tablas(Request $request)
     {
         $activeTab = $request->query('tab', 'categories');
 
-        // Cargar los datos según la pestaña activa
         $data = match ($activeTab) {
             'categories' => \App\Models\Category::orderBy('name')->paginate(4),
             'units' => \App\Models\Unit::orderBy('name')->paginate(4),

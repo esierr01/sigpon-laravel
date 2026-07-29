@@ -21,9 +21,11 @@
                                     class="text-custom text-decoration-none d-block mb-2">
                                     <i class="bi bi-box-seam me-2"></i> Inventario
                                 </a>
-                                <a href="{{ route('movements.index', ['from' => 'home']) }}"
-                                    class="text-custom text-decoration-none d-block"><i
-                                        class="bi bi-arrow-left-right me-2"></i> Movimientos</a>
+                                @if (Auth::user()->role == 1 || Auth::user()->role == 2 || Auth::user()->role == 4)
+                                    <a href="{{ route('movements.index', ['from' => 'home']) }}"
+                                        class="text-custom text-decoration-none d-block"><i
+                                            class="bi bi-arrow-left-right me-2"></i> Movimientos</a>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -53,7 +55,7 @@
                         </div>
                     </div>
 
-                    @if (Auth::user()->role != 3)
+                    @if (Auth::user()->role == 1 || Auth::user()->role == 4)
                         <!-- Historial -->
                         <div class="mb-3">
                             <a class="text-white d-flex align-items-center text-decoration-none" data-bs-toggle="collapse"
@@ -85,17 +87,19 @@
                         </a>
                         <div class="collapse mt-2" id="configMenu" data-bs-parent="#accordionMenu">
                             <div class="ps-3">
-                                @if (Auth::user()->role != 3)
-                                    @if (Auth::user()->role == 1)
-                                        <a href="{{ route('general.edit') }}"
-                                            class="text-custom text-decoration-none d-block mb-2">
-                                            <i class="bi bi-sliders2 me-2"></i> General
-                                        </a>
-                                    @endif
+                                @if (Auth::user()->role == 1 || Auth::user()->role == 4)
+                                    <a href="{{ route('general.edit') }}"
+                                        class="text-custom text-decoration-none d-block mb-2">
+                                        <i class="bi bi-sliders2 me-2"></i> General
+                                    </a>
+                                @endif
+                                @if (Auth::user()->role == 1 || Auth::user()->role == 4)
                                     <a href="{{ route('usuarios.index') }}"
                                         class="text-custom text-decoration-none d-block mb-2">
                                         <i class="bi bi-people me-2"></i> Usuarios
                                     </a>
+                                @endif
+                                @if (Auth::user()->role != 3)
                                     <a href="{{ route('tablas.index') }}"
                                         class="text-custom text-decoration-none d-block mb-2">
                                         <i class="bi bi-table me-2"></i> Tablas
@@ -125,7 +129,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <h6 class="card-title">Total Equipos en Inventario</h6>
-                                            <h3 class="mb-0">150</h3>
+                                            <h3 class="mb-0">{{ number_format($totalEquiposInventario) }}</h3>
                                         </div>
                                         <i class="bi bi-hdd-stack fs-1"></i>
                                     </div>
@@ -139,7 +143,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <h6 class="card-title">Movimientos en el Mes</h6>
-                                            <h3 class="mb-0">45</h3>
+                                            <h3 class="mb-0">{{ number_format($movimientosMes) }}</h3>
                                         </div>
                                         <i class="bi bi-arrow-repeat fs-1"></i>
                                     </div>
@@ -153,7 +157,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <h6 class="card-title">Usuarios Activos en el Sistema</h6>
-                                            <h3 class="mb-0">8</h3>
+                                            <h3 class="mb-0">{{ number_format($usuariosActivos) }}</h3>
                                         </div>
                                         <i class="bi bi-people fs-1"></i>
                                     </div>
@@ -170,7 +174,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <h6 class="card-title">Equipos con Bajo Stock</h6>
-                                            <h3 class="mb-0">12</h3>
+                                            <h3 class="mb-0">{{ number_format($equiposBajoStock) }}</h3>
                                         </div>
                                         <i class="bi bi-exclamation-triangle fs-1"></i>
                                     </div>
@@ -184,7 +188,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <h6 class="card-title">Total de Movimientos</h6>
-                                            <h3 class="mb-0">1,234</h3>
+                                            <h3 class="mb-0">{{ number_format($totalMovimientos) }}</h3>
                                         </div>
                                         <i class="bi bi-graph-up fs-1 text-success"></i>
                                     </div>
@@ -198,7 +202,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <h6 class="card-title">Almacenes Registrados</h6>
-                                            <h3 class="mb-0">5</h3>
+                                            <h3 class="mb-0">{{ number_format($almacenesRegistrados) }}</h3>
                                         </div>
                                         <i class="bi bi-building fs-1"></i>
                                     </div>
