@@ -22,11 +22,16 @@ class MovementController extends Controller
         if ($request->filled('search')) {
             $search = strtolower(trim($request->search));
 
-            $query->where(function ($q) use ($search) {
+            // ← NUEVO: Obtener IDs de tipos de movimiento que coincidan con el nombre buscado
+            $tipoIds = \App\Models\MovementType::whereRaw('LOWER(name) LIKE ?', ["%{$search}%"])
+                ->pluck('id');
+
+            $query->where(function ($q) use ($search, $tipoIds) {
                 $q->whereHas('equipment', function ($sub) use ($search) {
                     $sub->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"]);
                 })
-                    ->orWhere('movement_type', 'LIKE', "%{$search}%")
+                    // ← Buscar por nombre del tipo de movimiento (ej: "comp" → "Compra")
+                    ->orWhereIn('movement_type', $tipoIds)
                     ->orWhere('amount', 'LIKE', "%{$search}%")
                     ->orWhereRaw('LOWER(obs) LIKE ?', ["%{$search}%"])
                     ->orWhereHas('supplier', function ($sub) use ($search) {

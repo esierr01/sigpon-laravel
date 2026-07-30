@@ -16,10 +16,6 @@
                 </div>
 
                 <div class="card shadow">
-                    {{-- <div class="card-header bg-custom-gradient text-white">
-                        <h5 class="mb-0">Inventario Actual del Sistema</h5>
-                    </div> --}}
-
                     <div class="card-header bg-custom-gradient text-white">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">Inventario Actual del Sistema</h5>
@@ -584,6 +580,7 @@
                             // Volver al modal de detalle
                             modalEditarEquipo.hide();
                             modalDetalleEquipo.show();
+                            window.location.reload();
                         }
                     })
                     .catch(error => console.error('Error:', error));

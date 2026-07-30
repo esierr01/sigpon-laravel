@@ -15,6 +15,8 @@ class TablaController extends Controller
         'brand_models' => \App\Models\BrandModel::class,
         'suppliers' => \App\Models\Supplier::class,
         'stores' => \App\Models\Store::class,
+        'movement_types' => \App\Models\MovementType::class,
+        'roles' => \App\Models\Role::class,
     ];
 
     // Nombres legibles en español para los logs
@@ -24,6 +26,8 @@ class TablaController extends Controller
         'brand_models' => 'Marcas/Modelos',
         'suppliers' => 'Proveedores',
         'stores' => 'Almacenes',
+        'movement_types' => 'Tipos de Movimiento',
+        'roles' => 'Roles',
     ];
 
     // Reglas de validación por tabla
@@ -38,7 +42,7 @@ class TablaController extends Controller
     // Función auxiliar para obtener el nombre del registro según la tabla
     private function getNombreRegistro(string $tabla, $item): string
     {
-        if (in_array($tabla, ['categories', 'units', 'suppliers', 'stores'])) {
+        if (in_array($tabla, ['categories', 'units', 'suppliers', 'stores', 'movement_types', 'roles'])) {
             return $item->name ?? 'N/A';
         } elseif ($tabla === 'brand_models') {
             return ($item->brand ?? 'N/A') . ' - ' . ($item->model ?? 'N/A');
@@ -48,6 +52,11 @@ class TablaController extends Controller
 
     public function store(Request $request, string $tabla)
     {
+        // ← AGREGAR ESTO AL INICIO
+        if (in_array($tabla, ['movement_types', 'roles'])) {
+            abort(403, 'Esta tabla es de solo lectura y no puede ser modificada.');
+        }
+
         if (!isset($this->models[$tabla])) abort(404);
 
         $validated = $request->validate($this->rules[$tabla]);
@@ -71,6 +80,11 @@ class TablaController extends Controller
 
     public function update(Request $request, string $tabla, int $id)
     {
+        // ← AGREGAR ESTO AL INICIO
+        if (in_array($tabla, ['movement_types', 'roles'])) {
+            abort(403, 'Esta tabla es de solo lectura y no puede ser modificada.');
+        }
+
         if (!isset($this->models[$tabla])) abort(404);
 
         $validated = $request->validate($this->rules[$tabla]);
@@ -107,6 +121,11 @@ class TablaController extends Controller
 
     public function destroy(Request $request, string $tabla, int $id)
     {
+        // ← AGREGAR ESTO AL INICIO
+        if (in_array($tabla, ['movement_types', 'roles'])) {
+            abort(403, 'Esta tabla es de solo lectura y no puede ser modificada.');
+        }
+
         if (!isset($this->models[$tabla])) abort(404);
 
         $modelClass = $this->models[$tabla];

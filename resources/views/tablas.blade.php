@@ -22,6 +22,10 @@
                                 Proveedores
                             @elseif ($activeTab == 'stores')
                                 Almacenes
+                            @elseif ($activeTab == 'movement_types')
+                                Tipos de Movimiento
+                            @elseif ($activeTab == 'roles')
+                                Roles
                             @endif
                             )
                         </h5>
@@ -55,10 +59,19 @@
                                     href="{{ route('tablas.index', ['tab' => 'suppliers']) }}">Proveedores</a></li>
                             <li class="nav-item"><a class="nav-link {{ $activeTab == 'stores' ? 'active' : '' }}"
                                     href="{{ route('tablas.index', ['tab' => 'stores']) }}">Almacenes</a></li>
+                            <!-- ← NUEVAS PESTAÑAS (solo lectura) -->
+                            <li class="nav-item">
+                                <a class="nav-link {{ $activeTab == 'movement_types' ? 'active' : '' }}"
+                                    href="{{ route('tablas.index', ['tab' => 'movement_types']) }}">Tipos de Movimiento</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ $activeTab == 'roles' ? 'active' : '' }}"
+                                    href="{{ route('tablas.index', ['tab' => 'roles']) }}">Roles</a>
+                            </li>
                         </ul>
 
-                        <!-- Botón Agregar según pestaña (solo Admin) -->
-                        @if (Auth::user()->role == 1)
+                        <!-- Botón Agregar según pestaña (solo Admin y solo para tablas editables) -->
+                        @if (Auth::user()->role == 1 && !in_array($activeTab, ['movement_types', 'roles']))
                             <div class="d-flex justify-content-end mb-2">
                                 <button type="button" class="btn bg-custom-btn-first btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#modalCrear">
@@ -66,8 +79,7 @@
                                 </button>
                             </div>
                         @else
-                            <div class="d-flex justify-content-end mb-2">
-                            </div>
+                            <div class="d-flex justify-content-end mb-2"></div>
                         @endif
 
                         <!-- Contenido de la tabla dinámica -->
@@ -80,6 +92,8 @@
                                     'brand_models' => ['Marca', 'Modelo'],
                                     'suppliers' => ['Nombre', 'RIF', 'Teléfono', 'Contacto'],
                                     'stores' => ['Nombre', 'Teléfono', 'Contacto'],
+                                    'movement_types' => ['Nombre'],
+                                    'roles' => ['Nombre'],
                                     default => [],
                                 };
                             @endphp
@@ -91,7 +105,7 @@
                                             <th>{{ $col }}</th>
                                         @endforeach
                                         <th>Fecha Creación</th>
-                                        @if (Auth::user()->role == 1)
+                                        @if (Auth::user()->role == 1 && !in_array($activeTab, ['movement_types', 'roles']))
                                             <th class="text-center">Acciones</th>
                                         @endif
                                     </tr>
@@ -100,7 +114,7 @@
                                     @forelse($data as $item)
                                         <tr>
                                             <!-- Columnas dinámicas -->
-                                            @if ($activeTab == 'categories' || $activeTab == 'units')
+                                            @if ($activeTab == 'categories' || $activeTab == 'units' || $activeTab == 'movement_types' || $activeTab == 'roles')
                                                 <td style="width: 600px">{{ $item->name }}</td>
                                             @elseif($activeTab == 'brand_models')
                                                 <td style="width: 350px">{{ $item->brand }}</td>
@@ -116,36 +130,28 @@
                                                 <td>{{ $item->contact }}</td>
                                             @endif
 
-                                            <td>{{ $item->created_at->format('d/m/Y H:i:s') }}</td>
+                                            <td>{{ $item->created_at?->format('d/m/Y H:i:s') ?? 'N/A' }}</td>
 
-                                            @if (Auth::user()->role == 1)
+                                            <!-- ← Columna de Acciones: SOLO para tablas editables -->
+                                            @if (Auth::user()->role == 1 && !in_array($activeTab, ['movement_types', 'roles']))
                                                 <td class="text-center d-flex gap-3 align-items-center justify-content-center">
-
                                                     @if ($activeTab == 'suppliers' || $activeTab == 'stores')
-                                                        <!-- Botón Detalle (Solo Proveedores y Almacenes) -->
-                                                        <button type="button"
-                                                            class="btn bg-custom-btn-on btn-sm btn-ver-detalle"
-                                                            data-item="{{ json_encode($item) }}"
-                                                            data-tabla="{{ $activeTab }}">
+                                                        <button type="button" class="btn bg-custom-btn-on btn-sm btn-ver-detalle"
+                                                            data-item="{{ json_encode($item) }}" data-tabla="{{ $activeTab }}">
                                                             Detalle
                                                         </button>
                                                     @endif
-
-                                                    <!-- Botón Editar (Abre modal) -->
                                                     <button type="button" class="btn bg-custom-btn-second btn-sm btn-editar"
                                                         data-id="{{ $item->id }}" data-tabla="{{ $activeTab }}"
                                                         data-item="{{ json_encode($item) }}">
                                                         Editar
                                                     </button>
-
-                                                    <!-- Botón Eliminar (Usa el modal existente) -->
-                                                    <button type="button"
-                                                        class="btn bg-custom-btn-danger btn-sm btn-toggle-status"
+                                                    <button type="button" class="btn bg-custom-btn-danger btn-sm btn-toggle-status"
                                                         data-url="{{ route('tablas.destroy', ['tabla' => $activeTab, 'id' => $item->id]) }}"
                                                         data-action="eliminar">
                                                         Eliminar
                                                     </button>
-                                            </td>
+                                                </td>
                                             @endif
                                         </tr>
                                     @empty
@@ -156,7 +162,10 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="mt-2">{{ $data->appends(['tab' => $activeTab])->links() }}</div>
+                        {{-- Solo mostrar paginación si $data es un paginator --}}
+                        @if ($data instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                            <div class="mt-2">{{ $data->appends(['tab' => $activeTab])->links() }}</div>
+                        @endif
                     </div>
                 </div>
             </div>

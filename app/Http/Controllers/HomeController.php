@@ -64,6 +64,8 @@ class HomeController extends Controller
             'brand_models' => \App\Models\BrandModel::orderBy('brand')->paginate(4),
             'suppliers' => \App\Models\Supplier::orderBy('name')->paginate(4),
             'stores' => \App\Models\Store::orderBy('name')->paginate(4),
+            'movement_types' => \App\Models\MovementType::orderBy('id')->get(),
+            'roles' => \App\Models\Role::orderBy('id')->get(),
             default => [],
         };
 
