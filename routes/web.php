@@ -11,6 +11,7 @@ use App\Http\Controllers\GeneralController; // <-- Agregar el controlador
 use App\Http\Controllers\InventoryController; // <-- Agregar el controlador
 use App\Http\Controllers\MovementController; // <-- Agregar el controlador
 use App\Http\Controllers\EquipmentController; // <-- Agregar el controlador
+use App\Http\Controllers\ReportController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -56,4 +57,24 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/movimientos', [MovementController::class, 'index'])->name('movements.index');
     Route::post('/movimientos', [MovementController::class, 'store'])->name('movements.store');
     Route::get('/movimientos/{movement}', [MovementController::class, 'show'])->name('movements.show');
+
+    // Reportes Stock
+    Route::get('/reportes/stock', [ReportController::class, 'stock'])->name('reports.stock');
+    Route::get('/reportes/stock/pdf', [ReportController::class, 'stockPdf'])->name('reports.stock.pdf');
+    Route::get('/reportes/stock/excel', [ReportController::class, 'stockExcel'])->name('reports.stock.excel');
+
+    // Reporte Bajo Stock
+    Route::get('/reportes/bajo-stock', [ReportController::class, 'lowStock'])->name('reports.low_stock');
+    Route::get('/reportes/bajo-stock/pdf', [ReportController::class, 'lowStockPdf'])->name('reports.low_stock.pdf');
+    Route::get('/reportes/bajo-stock/excel', [ReportController::class, 'lowStockExcel'])->name('reports.low_stock.excel');
+
+    // Reporte Movimientos
+    Route::get('/reportes/movimientos', [ReportController::class, 'movements'])->name('reports.movements');
+    Route::get('/reportes/movimientos/pdf', [ReportController::class, 'movementsPdf'])->name('reports.movements.pdf');
+    Route::get('/reportes/movimientos/excel', [ReportController::class, 'movementsExcel'])->name('reports.movements.excel');
+
+    // Reporte Historial
+    Route::get('/reportes/historial', [ReportController::class, 'history'])->name('reports.history');
+    Route::get('/reportes/historial/pdf', [ReportController::class, 'historyPdf'])->name('reports.history.pdf');
+    Route::get('/reportes/historial/excel', [ReportController::class, 'historyExcel'])->name('reports.history.excel');
 });

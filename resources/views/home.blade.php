@@ -39,18 +39,27 @@
                         </a>
                         <div class="collapse mt-2" id="reportesMenu" data-bs-parent="#accordionMenu">
                             <div class="ps-3">
-                                <a href="#" class="text-custom text-decoration-none d-block mb-2">
+                                <a href="{{ route('reports.stock') }}"
+                                    class="text-custom text-decoration-none d-block mb-2">
                                     <i class="bi bi-file-bar-graph me-2"></i> Stock
                                 </a>
-                                <a href="#" class="text-custom text-decoration-none d-block mb-2">
-                                    <i class="bi bi-file-bar-graph me-2"></i> Bajo Stock
-                                </a>
-                                <a href="#" class="text-custom text-decoration-none d-block">
-                                    <i class="bi bi-file-bar-graph me-2"></i> Movimientos
-                                </a>
-                                <a href="#" class="text-custom text-decoration-none d-block">
-                                    <i class="bi bi-file-bar-graph me-2"></i> Historial
-                                </a>
+                                @if (Auth::user()->role == 1 || Auth::user()->role == 2 || Auth::user()->role == 4)
+                                    <a href="{{ route('reports.low_stock') }}"
+                                        class="text-custom text-decoration-none d-block mb-2">
+                                        <i class="bi bi-file-bar-graph me-2"></i> Bajo Stock
+                                    </a>
+
+                                    <a href="{{ route('reports.movements') }}"
+                                        class="text-custom text-decoration-none d-block">
+                                        <i class="bi bi-file-bar-graph me-2"></i> Movimientos
+                                    </a>
+                                @endif
+                                @if (Auth::user()->role == 1 || Auth::user()->role == 4)
+                                    <a href="{{ route('reports.history') }}"
+                                        class="text-custom text-decoration-none d-block">
+                                        <i class="bi bi-file-bar-graph me-2"></i> Historial
+                                    </a>
+                                @endif
                             </div>
                         </div>
                     </div>

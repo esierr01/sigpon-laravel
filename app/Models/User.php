@@ -42,6 +42,7 @@ class User extends Authenticatable
     const ROLE_ADMIN = 1;
     const ROLE_EDITOR = 2;
     const ROLE_VISITOR = 3;
+    const ROLE_AUDITOR = 4;
 
     // Métodos helper
     public function isAdmin()
@@ -57,6 +58,11 @@ class User extends Authenticatable
     public function isVisitor()
     {
         return $this->role === self::ROLE_VISITOR;
+    }
+
+    public function isAuditor()
+    {
+        return $this->role === self::ROLE_AUDITOR;
     }
 
     // Relación autorreferencial
